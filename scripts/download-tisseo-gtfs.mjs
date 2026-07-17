@@ -13,7 +13,13 @@ await writeFile(archivePath, Buffer.from(await response.arrayBuffer()));
 
 await new Promise((accept, reject) => {
   const extraction = spawn("tar", ["-xf", archivePath, "-C", cacheDirectory], { stdio: "inherit" });
-  extraction.once("error", reject);
+  extraction.once("error", (error) => {
+    reject(
+      new Error(
+        `Impossible de lancer la commande tar. Vérifie qu'elle est installée : ${error.message}`,
+      ),
+    );
+  });
   extraction.once("exit", (code) => (code === 0 ? accept() : reject(new Error(`tar exited with code ${code}.`))));
 });
 
