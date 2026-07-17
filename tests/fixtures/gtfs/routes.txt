@@ -1,0 +1,3 @@
+route_id,route_short_name,route_long_name,route_type
+ROUTE_A,A,Métro ligne A,1
+ROUTE_BUS,14,Bus de démonstration,3

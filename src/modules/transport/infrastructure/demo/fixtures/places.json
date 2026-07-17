@@ -1,0 +1,10 @@
+[
+  { "id": "toulouse-matabiau", "name": "Toulouse-Matabiau", "kind": "station", "coordinates": { "longitude": 1.4537, "latitude": 43.6114 } },
+  { "id": "capitole", "name": "Capitole", "kind": "public-place", "coordinates": { "longitude": 1.4442, "latitude": 43.6045 } },
+  { "id": "universite-paul-sabatier", "name": "Université Paul-Sabatier", "kind": "station", "coordinates": { "longitude": 1.4626, "latitude": 43.5601 } },
+  { "id": "jean-jaures", "name": "Jean-Jaurès", "kind": "station", "coordinates": { "longitude": 1.448, "latitude": 43.6057 } },
+  { "id": "arenes", "name": "Arènes", "kind": "station", "coordinates": { "longitude": 1.418, "latitude": 43.5935 } },
+  { "id": "canal-du-midi", "name": "Canal du Midi", "kind": "station", "coordinates": { "longitude": 1.433, "latitude": 43.6159 } },
+  { "id": "saint-michel-marcel-langer", "name": "Saint-Michel – Marcel-Langer", "kind": "station", "coordinates": { "longitude": 1.4459, "latitude": 43.5798 } },
+  { "id": "palais-de-justice", "name": "Palais de Justice", "kind": "station", "coordinates": { "longitude": 1.444, "latitude": 43.5926 } }
+]

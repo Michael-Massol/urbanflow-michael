@@ -1,0 +1,13 @@
+{
+  "source": "Observed against https://api.tisseo.fr/v2 on 2026-07-17",
+  "request": {
+    "method": "GET",
+    "authentication": "none"
+  },
+  "response": {
+    "status": 401,
+    "contentType": "text/plain; charset=utf-8",
+    "body": "No key provided",
+    "rateLimitHeaders": {}
+  }
+}

@@ -1,0 +1,4 @@
+stop_id,stop_name,stop_lat,stop_lon
+STOP_MATABIAU,Toulouse-Matabiau,43.6114,1.4537
+STOP_CAPITOLE,Capitole,43.6045,1.4442
+STOP_JAURES,Jean-Jaurès,43.6057,1.4480

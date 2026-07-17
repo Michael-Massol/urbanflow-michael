@@ -1,0 +1,14 @@
+{
+  "name": "urbanflow-tisseo-spike",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "probe": "node --experimental-strip-types src/probe.ts",
+    "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0",
+    "@types/node": "^22.0.0"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "toulouse-matabiau:capitole": [
+    {
+      "id": "demo-matabiau-capitole-a",
+      "durationMinutes": 12,
+      "distanceMeters": 1550,
+      "transfers": 0,
+      "legs": [
+        { "id": "a1", "mode": "walk", "fromId": "toulouse-matabiau", "toId": "jean-jaures", "durationMinutes": 6, "distanceMeters": 650, "geometry": [[1.4537, 43.6114], [1.448, 43.6057]] },
+        { "id": "a2", "mode": "metro", "lineName": "Métro A", "fromId": "jean-jaures", "toId": "capitole", "durationMinutes": 2, "distanceMeters": 450, "geometry": [[1.448, 43.6057], [1.4442, 43.6045]] },
+        { "id": "a3", "mode": "walk", "fromId": "capitole", "toId": "capitole", "durationMinutes": 4, "distanceMeters": 450 }
+      ]
+    },
+    {
+      "id": "demo-matabiau-capitole-b",
+      "durationMinutes": 18,
+      "distanceMeters": 1450,
+      "transfers": 0,
+      "legs": [
+        { "id": "b1", "mode": "bus", "lineName": "Bus démo", "fromId": "toulouse-matabiau", "toId": "capitole", "durationMinutes": 13, "distanceMeters": 1200, "geometry": [[1.4537, 43.6114], [1.448, 43.607], [1.4442, 43.6045]] },
+        { "id": "b2", "mode": "walk", "fromId": "capitole", "toId": "capitole", "durationMinutes": 5, "distanceMeters": 250 }
+      ]
+    }
+  ],
+  "capitole:universite-paul-sabatier": [
+    {
+      "id": "demo-capitole-ups-a",
+      "durationMinutes": 24,
+      "distanceMeters": 6900,
+      "transfers": 1,
+      "legs": [
+        { "id": "c1", "mode": "walk", "fromId": "capitole", "toId": "jean-jaures", "durationMinutes": 6, "distanceMeters": 550 },
+        { "id": "c2", "mode": "metro", "lineName": "Métro B", "fromId": "jean-jaures", "toId": "universite-paul-sabatier", "durationMinutes": 18, "distanceMeters": 6350, "geometry": [[1.448, 43.6057], [1.4459, 43.5798], [1.4626, 43.5601]] }
+      ]
+    },
+    {
+      "id": "demo-capitole-ups-b",
+      "durationMinutes": 31,
+      "distanceMeters": 7200,
+      "transfers": 1,
+      "legs": [
+        { "id": "d1", "mode": "bike", "fromId": "capitole", "toId": "palais-de-justice", "durationMinutes": 10, "distanceMeters": 2200, "geometry": [[1.4442, 43.6045], [1.444, 43.5926]] },
+        { "id": "d2", "mode": "metro", "lineName": "Métro B", "fromId": "palais-de-justice", "toId": "universite-paul-sabatier", "durationMinutes": 21, "distanceMeters": 5000, "geometry": [[1.444, 43.5926], [1.4626, 43.5601]] }
+      ]
+    }
+  ],
+  "jean-jaures:arenes": [
+    {
+      "id": "demo-jean-jaures-arenes-a",
+      "durationMinutes": 15,
+      "distanceMeters": 3900,
+      "transfers": 0,
+      "legs": [
+        { "id": "e1", "mode": "metro", "lineName": "Métro A", "fromId": "jean-jaures", "toId": "arenes", "durationMinutes": 12, "distanceMeters": 3700, "geometry": [[1.448, 43.6057], [1.433, 43.6], [1.418, 43.5935]] },
+        { "id": "e2", "mode": "walk", "fromId": "arenes", "toId": "arenes", "durationMinutes": 3, "distanceMeters": 200 }
+      ]
+    },
+    {
+      "id": "demo-jean-jaures-arenes-b",
+      "durationMinutes": 25,
+      "distanceMeters": 4300,
+      "transfers": 0,
+      "legs": [
+        { "id": "f1", "mode": "tram", "lineName": "Tram démo", "fromId": "jean-jaures", "toId": "arenes", "durationMinutes": 20, "distanceMeters": 4000, "geometry": [[1.448, 43.6057], [1.432, 43.601], [1.418, 43.5935]] },
+        { "id": "f2", "mode": "walk", "fromId": "arenes", "toId": "arenes", "durationMinutes": 5, "distanceMeters": 300 }
+      ]
+    }
+  ]
+}

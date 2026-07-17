@@ -1,0 +1,19 @@
+{
+  "source": "Synthetic fixture used only to test the structural anonymizer",
+  "notAnApiCapture": true,
+  "payloadSummary": {
+    "rootType": "object",
+    "rootKeys": ["journeys"],
+    "arrayLengths": {
+      "$.journeys": 1,
+      "$.journeys[0].legs": 2
+    },
+    "geometry": [
+      {
+        "path": "$.journeys[0].legs[0].geometry.coordinates",
+        "kind": "coordinate-sequence",
+        "points": 3
+      }
+    ]
+  }
+}

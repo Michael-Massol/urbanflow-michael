@@ -1,0 +1,18 @@
+{
+  "name": "urbanflow-mobility",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --experimental-strip-types --test tests/**/*.test.ts",
+    "test:spike": "npm --prefix spikes/tisseo test",
+    "typecheck": "tsc --noEmit",
+    "gtfs:download": "node scripts/download-tisseo-gtfs.mjs"
+  },
+  "dependencies": {
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.9.0"
+  }
+}
