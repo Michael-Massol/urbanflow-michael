@@ -1,4 +1,4 @@
-const CACHE_NAME = "urbanflow-shell-v1";
+const CACHE_NAME = "urbanflow-shell-v2";
 const OFFLINE_URL = "/hors-ligne";
 const PRECACHE_URLS = [OFFLINE_URL, "/icon-192.png", "/icon-512.png"];
 
@@ -20,6 +20,15 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   const request = event.request;
-  if (request.method !== "GET" || request.mode !== "navigate") return;
-  event.respondWith(fetch(request).catch(() => caches.match(OFFLINE_URL)));
+  const url = new URL(request.url);
+  if (
+    request.method !== "GET"
+    || request.mode !== "navigate"
+    || url.origin !== self.location.origin
+    || url.pathname.startsWith("/api/")
+  ) return;
+
+  event.respondWith(
+    fetch(request, { cache: "no-store" }).catch(() => caches.match(OFFLINE_URL)),
+  );
 });

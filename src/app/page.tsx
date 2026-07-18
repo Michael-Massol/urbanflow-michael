@@ -1,10 +1,20 @@
 import Link from "next/link";
 import { DEMO_PROVIDER_NOTICE } from "@/modules/transport/infrastructure/demo/demo-transport-provider";
 
-export default function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ compte?: string }>;
+}) {
+  const accountDeleted = (await searchParams).compte === "supprime";
   return (
     <>
       <section className="hero page-shell">
+        {accountDeleted ? (
+          <p className="form-message form-message-success" role="status">
+            Votre compte et les données associées ont été supprimés.
+          </p>
+        ) : null}
         <p className="eyebrow">Mobilité toulousaine</p>
         <h1>Préparez des déplacements plus simples et plus durables.</h1>
         <p className="hero-copy">

@@ -1,8 +1,8 @@
 # UrbanFlow Mobility
 
-UrbanFlow est un monolithe modulaire Next.js App Router. La V2 ajoute une planification multimodale de démonstration, la géolocalisation consentie et une carte MapLibre au socle V1.
+UrbanFlow est un monolithe modulaire Next.js App Router.
 
-## Stack V1
+## Stack du MVP
 
 - Next.js 16, React 19 et TypeScript strict ;
 - Supabase Auth et PostgreSQL avec Row Level Security ;
@@ -16,7 +16,7 @@ Les modules sont séparés en `domain`, `application`, `infrastructure` et `pres
 ## Installation
 
 ```bash
-npm install
+npm ci
 copy .env.example .env.local
 npm run dev
 ```
@@ -26,7 +26,7 @@ Renseigner dans `.env.local` :
 - `NEXT_PUBLIC_SUPABASE_URL` ;
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` ;
 - `NEXT_PUBLIC_SITE_URL` ;
-- `SUPABASE_SECRET_KEY` uniquement lorsque des opérations administratives seront nécessaires.
+- `SUPABASE_SECRET_KEY` côté serveur pour le test RLS et la suppression complète du compte.
 
 Appliquer ensuite, dans l'ordre, les migrations du dossier `supabase/migrations`. Elles créent le profil minimal, les préférences de mobilité, leurs déclencheurs d'initialisation et les politiques RLS par propriétaire.
 
@@ -37,6 +37,8 @@ Dans le modèle d'e-mail Supabase « Confirm signup », utiliser :
 ```
 
 La clé privilégiée ne doit jamais être exposée au navigateur. Les clients Supabase navigateur, serveur avec session et administratif sont séparés dans `src/modules/supabase/infrastructure`.
+
+Renseigner aussi `NEXT_PUBLIC_PRIVACY_CONTACT_EMAIL` avant une publication publique. Les étapes complètes de reprise et de mise en production sont détaillées dans [docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md).
 
 ## PWA
 
@@ -97,7 +99,7 @@ La carte est optionnelle. Pour l’activer, renseigner une URL publique de style
 NEXT_PUBLIC_MAP_STYLE_URL=https://example.org/style.json
 ```
 
-Sans cette variable, le détail textuel reste entièrement disponible et un message explique que la carte est désactivée. Les itinéraires de démonstration sont fictifs, non temps réel et impropres à un déplacement réel. La V2 ne persiste aucun historique et ne calcule aucune donnée carbone.
+Sans cette variable, le détail textuel reste entièrement disponible et un message explique que la carte est désactivée. Les itinéraires de démonstration sont fictifs, non temps réel et impropres à un déplacement réel. La recherche V2 ne persiste rien ; seuls la confirmation explicite et le module carbone V3 alimentent l’historique.
 
 ## Suivi carbone V3
 
@@ -106,6 +108,19 @@ Chaque proposition affiche une estimation calculée segment par segment en gCO�
 Le référentiel statique `urbanflow-ademe-2025.1` reprend les valeurs publiées par ADEME/Impact CO₂ : marche 0, vélo mécanique 0,17, métro 4,44, tramway 4,28, bus thermique 122, TER 27,7 et voiture thermique moyenne diesel 142 gCO₂e/passager-km. Les liens sources et hypothèses sont conservés dans `src/modules/carbon-tracking/domain/emission-factors.ts`.
 
 Ces valeurs sont des moyennes nationales. Le TER sert de référence prudente au mode générique `train`. La marche est comptée à zéro dans le périmètre retenu ; le vélo inclut la fabrication amortie publiée par Impact CO₂. L’estimation dépend des distances théoriques et ne constitue ni une mesure réelle ni un bilan de cycle de vie personnalisé. Les facteurs ne sont pas téléchargés dynamiquement en V3.
+
+## Confidentialité et finalisation V4
+
+La page privée `/confidentialite` fournit un résumé des catégories enregistrées, un export JSON versionné et la suppression complète du compte après double confirmation. L’export est construit depuis un modèle UrbanFlow explicite sous la session et la RLS ; il ne contient ni mot de passe, jeton, secret, coordonnées précises ou réponse brute fournisseur. Seule la suppression de l’utilisateur Auth emploie le client Supabase administratif `server-only`. Les cascades SQL effacent profil, préférences et trajets confirmés.
+
+La politique publique est disponible sur `/politique-de-confidentialite`. Les pages d’erreur ne rendent aucun détail d’infrastructure. Les en-têtes CSP, HSTS en production, anti-framing, `nosniff`, politique de référent et Permissions Policy sont centralisés dans `next.config.ts`.
+
+Documentation finale :
+
+- [déploiement et reprise locale](docs/DEPLOIEMENT.md) ;
+- [revue RGPD, sécurité, accessibilité et éco-conception](docs/RGPD-SECURITE-ACCESSIBILITE.md) ;
+- [scénario et preuves de soutenance](docs/SOUTENANCE.md) ;
+- [checklist V4 et traçabilité C1.1 à C3.3](docs/CHECKLIST-V4.md).
 
 ## GTFS Tisséo en lecture seule
 
@@ -131,7 +146,7 @@ Le jeu officiel est publié quotidiennement et décrit environ trois semaines d'
 ## Validation
 
 ```bash
-npm install
+npm ci
 npm run lint
 npm run typecheck
 npm test

@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { isPrivatePagePath } from "../../auth/application/private-routes";
 import { hasPublicSupabaseConfig, getPublicServerConfig } from "./server-config";
 
 export async function updateSupabaseSession(request: NextRequest): Promise<NextResponse> {
@@ -19,6 +20,17 @@ export async function updateSupabaseSession(request: NextRequest): Promise<NextR
     },
   });
 
-  await supabase.auth.getClaims();
+  const { data } = await supabase.auth.getClaims();
+  const userId = typeof data?.claims?.sub === "string" ? data.claims.sub : null;
+
+  if (!userId && isPrivatePagePath(request.nextUrl.pathname)) {
+    const destination = request.nextUrl.clone();
+    destination.pathname = "/connexion";
+    destination.searchParams.set("retour", request.nextUrl.pathname);
+    const redirect = NextResponse.redirect(destination);
+    response.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie));
+    return redirect;
+  }
+
   return response;
 }

@@ -6,6 +6,7 @@ test("service worker provides network-first navigation and an offline fallback",
   const source = await readFile("public/sw.js", "utf8");
   assert.match(source, /const OFFLINE_URL = "\/hors-ligne"/);
   assert.match(source, /request\.mode !== "navigate"/);
-  assert.match(source, /fetch\(request\)\.catch\(\(\) => caches\.match\(OFFLINE_URL\)\)/);
+  assert.match(source, /fetch\(request, \{ cache: "no-store" \}\)\.catch\(\(\) => caches\.match\(OFFLINE_URL\)\)/);
+  assert.match(source, /url\.pathname\.startsWith\("\/api\/"\)/);
   assert.doesNotMatch(source, /cache\.put\(request/);
 });

@@ -192,6 +192,27 @@ test("RLS isolates profiles, mobility preferences and completed journeys for two
     assert.ifError(ownPreferencesUpdate.error);
     assert.deepEqual(ownPreferencesUpdate.data.preferred_modes, ["metro"]);
     assert.equal(ownPreferencesUpdate.data.max_walking_minutes, 12);
+
+    const cascadeJourneyInsert = await clientA.from("completed_journeys")
+      .insert(completedJourney)
+      .select("id")
+      .single();
+    assert.ifError(cascadeJourneyInsert.error);
+    const accountDeletion = await admin.auth.admin.deleteUser(userA.id);
+    assert.ifError(accountDeletion.error);
+    createdUserIds.splice(createdUserIds.indexOf(userA.id), 1);
+
+    const [profileAfterDeletion, preferencesAfterDeletion, journeysAfterDeletion] = await Promise.all([
+      admin.from("profiles").select("user_id").eq("user_id", userA.id),
+      admin.from("mobility_preferences").select("user_id").eq("user_id", userA.id),
+      admin.from("completed_journeys").select("user_id").eq("user_id", userA.id),
+    ]);
+    assert.ifError(profileAfterDeletion.error);
+    assert.ifError(preferencesAfterDeletion.error);
+    assert.ifError(journeysAfterDeletion.error);
+    assert.deepEqual(profileAfterDeletion.data, [], "La suppression du compte efface le profil");
+    assert.deepEqual(preferencesAfterDeletion.data, [], "La suppression du compte efface les préférences");
+    assert.deepEqual(journeysAfterDeletion.data, [], "La suppression du compte efface les trajets");
   } finally {
     await Promise.all(createdUserIds.map((userId) => admin.auth.admin.deleteUser(userId)));
   }

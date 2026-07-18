@@ -8,6 +8,7 @@ export function ServiceWorkerRegistration() {
   useEffect(() => {
     if (process.env.NODE_ENV !== "production" || !("serviceWorker" in navigator)) return;
     let active = true;
+    let updateRegistration: (() => void) | undefined;
     navigator.serviceWorker.register("/sw.js").then((registration) => {
       if (!active) return;
       if (registration.waiting) setWaitingWorker(registration.waiting);
@@ -19,6 +20,8 @@ export function ServiceWorkerRegistration() {
           }
         });
       });
+      updateRegistration = () => void registration.update().catch(() => undefined);
+      window.addEventListener("online", updateRegistration);
     }).catch(() => {
       // The application remains usable when service worker registration is unavailable.
     });
@@ -27,14 +30,18 @@ export function ServiceWorkerRegistration() {
     return () => {
       active = false;
       navigator.serviceWorker.removeEventListener("controllerchange", reload);
+      if (updateRegistration) window.removeEventListener("online", updateRegistration);
     };
   }, []);
 
   if (!waitingWorker) return null;
   return (
-    <aside className="update-banner" role="status">
+    <aside className="update-banner" aria-live="polite">
       <span>Une mise à jour d’UrbanFlow est disponible.</span>
-      <button className="button button-small" type="button" onClick={() => waitingWorker.postMessage({ type: "SKIP_WAITING" })}>Mettre à jour</button>
+      <div className="actions update-actions">
+        <button className="button button-small" type="button" onClick={() => waitingWorker.postMessage({ type: "SKIP_WAITING" })}>Mettre à jour</button>
+        <button className="button button-secondary button-small" type="button" onClick={() => setWaitingWorker(null)}>Plus tard</button>
+      </div>
     </aside>
   );
 }
