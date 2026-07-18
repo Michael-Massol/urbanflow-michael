@@ -1,6 +1,55 @@
 # UrbanFlow Mobility
 
-UrbanFlow est préparé comme un monolithe modulaire. L'application Next.js n'est pas encore générée ; le dépôt contient actuellement le noyau transport indépendant du framework et le spike Tisséo.
+UrbanFlow est un monolithe modulaire Next.js App Router. La V1 fournit le socle responsive, l'authentification Supabase SSR, un profil minimal et les fondations PWA. La planification d'itinéraires reste hors de cette version.
+
+## Stack V1
+
+- Next.js 16, React 19 et TypeScript strict ;
+- Supabase Auth et PostgreSQL avec Row Level Security ;
+- CSS mobile-first sans bibliothèque UI ;
+- manifest App Router et service worker minimal ;
+- ESLint, tests Node et build Next.js.
+
+Les modules sont séparés en `domain`, `application`, `infrastructure` et `presentation`. Les Route Handlers et Server Actions ne portent pas les règles métier.
+
+## Installation
+
+```bash
+npm install
+copy .env.example .env.local
+npm run dev
+```
+
+Renseigner dans `.env.local` :
+
+- `NEXT_PUBLIC_SUPABASE_URL` ;
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` ;
+- `NEXT_PUBLIC_SITE_URL` ;
+- `SUPABASE_SECRET_KEY` uniquement lorsque des opérations administratives seront nécessaires.
+
+Appliquer ensuite, dans l'ordre, les migrations du dossier `supabase/migrations`. Elles créent le profil minimal, les préférences de mobilité, leurs déclencheurs d'initialisation et les politiques RLS par propriétaire.
+
+Dans le modèle d'e-mail Supabase « Confirm signup », utiliser :
+
+```text
+{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email
+```
+
+La clé privilégiée ne doit jamais être exposée au navigateur. Les clients Supabase navigateur, serveur avec session et administratif sont séparés dans `src/modules/supabase/infrastructure`.
+
+## PWA
+
+- `app/manifest.ts` décrit l'installation et les icônes 192/512 ;
+- `public/sw.js` précharge uniquement la page hors ligne et les icônes ;
+- les navigations utilisent le réseau puis `/hors-ligne` en secours ;
+- aucune session, réponse Supabase ou donnée utilisateur n'est mise en cache ;
+- une mise à jour attend l'accord de l'utilisateur avant d'activer le nouveau worker.
+
+## Profil de mobilité et pages privées
+
+Le profil permet de modifier le nom affiché, les modes préférés ou évités, la durée maximale de marche et la prise en compte d'une mobilité réduite. Les pages `/profil`, `/dashboard` et `/diagnostics/transport` vérifient la session côté serveur et redirigent vers `/connexion` sans utilisateur authentifié.
+
+Le diagnostic transport expose uniquement le fournisseur, sa notice, la disponibilité booléenne du GTFS local et son statut. Il ne retourne jamais de clé API, de jeton ni de chemin local.
 
 ## Fournisseurs de transport
 
@@ -60,10 +109,19 @@ Le jeu officiel est publié quotidiennement et décrit environ trois semaines d'
 
 ```bash
 npm install
+npm run lint
 npm run typecheck
 npm test
+npm run test:rls
 npm run test:spike
+npm run build
 ```
+
+### Preuve d'isolation RLS
+
+`npm run test:rls` exécute un test d'intégration contre le projet Supabase configuré dans `.env.local`. Il crée deux utilisateurs techniques temporaires, vérifie l'isolation de leurs profils et préférences de mobilité, contrôle qu'une modification croisée n'a aucun effet et qu'une modification propriétaire fonctionne. Les deux comptes sont supprimés à la fin du test, y compris après un échec intermédiaire.
+
+Ce test nécessite `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY` et la migration des profils déjà appliquée. La clé privilégiée reste exclusivement côté serveur et ne doit jamais être commitée. Un test non exécuté faute de configuration ne constitue pas une validation RLS.
 
 Le sous-ensemble GTFS sous `tests/fixtures/gtfs` est synthétique, petit et versionnable. Le GTFS complet reste dans `.cache/`.
 

@@ -3,16 +3,34 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
     "test": "node --experimental-strip-types --test tests/**/*.test.ts",
+    "test:rls": "node --env-file-if-exists=.env.local --experimental-strip-types --test integration-tests/supabase-rls.test.ts",
     "test:spike": "npm --prefix spikes/tisseo test",
     "typecheck": "tsc --noEmit",
     "gtfs:download": "node scripts/download-tisseo-gtfs.mjs"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.12.3",
+    "@supabase/supabase-js": "^2.110.7",
+    "next": "^16.2.10",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "server-only": "^0.0.1",
     "zod": "^4.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.2.10",
     "typescript": "^5.9.0"
+  },
+  "overrides": {
+    "postcss": "8.5.10"
   }
 }

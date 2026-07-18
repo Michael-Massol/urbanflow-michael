@@ -23,6 +23,6 @@ const transportConfigSchema = z
 
 export type TransportConfig = z.infer<typeof transportConfigSchema>;
 
-export function parseTransportConfig(environment: NodeJS.ProcessEnv): TransportConfig {
+export function parseTransportConfig(environment: Record<string, string | undefined>): TransportConfig {
   return transportConfigSchema.parse(environment);
 }

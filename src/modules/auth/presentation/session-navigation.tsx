@@ -1,0 +1,26 @@
+import Link from "next/link";
+import { getServerUserId } from "../infrastructure/get-server-user-id";
+import { signOutAction } from "./auth-actions";
+
+export async function SessionNavigation() {
+  const isAuthenticated = Boolean(await getServerUserId());
+
+  if (isAuthenticated) {
+    return (
+      <nav aria-label="Navigation principale">
+        <Link href="/dashboard">Tableau de bord</Link>
+        <Link href="/profil">Mon profil</Link>
+        <form action={signOutAction}>
+          <button className="nav-button" type="submit">Déconnexion</button>
+        </form>
+      </nav>
+    );
+  }
+
+  return (
+    <nav aria-label="Navigation principale">
+      <Link href="/connexion">Connexion</Link>
+      <Link className="button button-small" href="/inscription">Créer un compte</Link>
+    </nav>
+  );
+}
