@@ -11,7 +11,7 @@ export default function HomePage() {
           UrbanFlow réunira vos préférences de mobilité, vos itinéraires multimodaux et leur impact carbone dans une application installable.
         </p>
         <div className="actions">
-          <Link className="button" href="/inscription">Commencer</Link>
+          <Link className="button" href="/planifier">Planifier un trajet</Link>
           <Link className="button button-secondary" href="/connexion">J’ai déjà un compte</Link>
         </div>
       </section>
@@ -24,7 +24,7 @@ export default function HomePage() {
         <div className="feature-grid">
           <article className="card"><h3>Profil personnel</h3><p>Un compte sécurisé et un profil limité aux informations utiles.</p></article>
           <article className="card"><h3>Application installable</h3><p>Une expérience mobile-first avec un état hors ligne explicite.</p></article>
-          <article className="card"><h3>Respect des données</h3><p>Aucune géolocalisation n’est demandée dans cette première version.</p></article>
+          <article className="card"><h3>Respect des données</h3><p>La position est demandée uniquement après votre accord et n’est jamais enregistrée.</p></article>
         </div>
       </section>
     </>

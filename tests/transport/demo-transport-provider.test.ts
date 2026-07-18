@@ -19,6 +19,12 @@ test("searchPlaces is accent-insensitive, deterministic, and limited", async () 
   assert.equal(first[0]?.id, "jean-jaures");
 });
 
+test("demo fixtures expose the required Toulouse places", async () => {
+  for (const query of ["Capitole", "Matabiau", "Jean-Jaurès", "Compans", "Paul-Sabatier", "Arènes", "Palais", "Aéroport", "Ramonville", "Borderouge"]) {
+    assert.ok((await provider.searchPlaces({ query, limit: 10 })).length > 0, `Lieu absent : ${query}`);
+  }
+});
+
 for (const [originId, destinationId] of [
   ["toulouse-matabiau", "capitole"],
   ["capitole", "universite-paul-sabatier"],
@@ -44,9 +50,8 @@ for (const [originId, destinationId] of [
   });
 }
 
-test("rejects a route absent from the versioned scenarios", async () => {
-  await assert.rejects(
-    provider.planJourney({ originId: "arenes", destinationId: "capitole" }),
-    { name: "JourneyNotSupportedError" },
-  );
+test("creates deterministic generic alternatives outside the versioned scenarios", async () => {
+  const options = await provider.planJourney({ originId: "arenes", destinationId: "capitole" });
+  assert.equal(options.length, 3);
+  assert.deepEqual(options, await provider.planJourney({ originId: "arenes", destinationId: "capitole" }));
 });

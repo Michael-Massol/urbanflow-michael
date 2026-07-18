@@ -57,6 +57,72 @@ function resolvePlace(id: string): Place {
   return place;
 }
 
+function distanceMeters(first: Place, second: Place): number {
+  const radius = 6_371_000;
+  const radians = (degrees: number) => (degrees * Math.PI) / 180;
+  const latitudeDelta = radians(second.coordinates.latitude - first.coordinates.latitude);
+  const longitudeDelta = radians(second.coordinates.longitude - first.coordinates.longitude);
+  const firstLatitude = radians(first.coordinates.latitude);
+  const secondLatitude = radians(second.coordinates.latitude);
+  const value =
+    Math.sin(latitudeDelta / 2) ** 2 +
+    Math.cos(firstLatitude) * Math.cos(secondLatitude) * Math.sin(longitudeDelta / 2) ** 2;
+  return Math.round(2 * radius * Math.asin(Math.sqrt(value)));
+}
+
+function createGenericDemoJourneys(request: JourneyRequest): readonly JourneyOption[] {
+  const origin = request.origin ?? placesById.get(request.originId);
+  const destination = request.destination ?? placesById.get(request.destinationId);
+  if (!origin || !destination) {
+    throw new JourneyNotSupportedError("Le fournisseur de démonstration ne connaît pas ces lieux.");
+  }
+
+  const distance = Math.max(distanceMeters(origin, destination), 100);
+  const geometry = {
+    type: "LineString" as const,
+    coordinates: [
+      [origin.coordinates.longitude, origin.coordinates.latitude],
+      [destination.coordinates.longitude, destination.coordinates.latitude],
+    ] as [number, number][],
+  };
+  const options: JourneyOption[] = [
+    {
+      id: `demo-${origin.id}-${destination.id}-walk`,
+      durationMinutes: Math.max(2, Math.ceil(distance / 80)),
+      distanceMeters: distance,
+      transfers: 0,
+      isRealTime: false,
+      legs: [{ id: "walk-direct", mode: "walk", from: origin, to: destination, durationMinutes: Math.max(2, Math.ceil(distance / 80)), distanceMeters: distance, geometry }],
+    },
+    {
+      id: `demo-${origin.id}-${destination.id}-bike`,
+      durationMinutes: Math.max(5, Math.ceil(distance / 250) + 4),
+      distanceMeters: distance + 200,
+      transfers: 0,
+      isRealTime: false,
+      legs: [
+        { id: "walk-bike", mode: "walk", from: origin, to: origin, durationMinutes: 2, distanceMeters: 100 },
+        { id: "bike-direct", mode: "bike", from: origin, to: destination, durationMinutes: Math.max(3, Math.ceil(distance / 250)), distanceMeters: distance, lineName: "Vélo de démonstration", geometry },
+        { id: "walk-arrival", mode: "walk", from: destination, to: destination, durationMinutes: 2, distanceMeters: 100 },
+      ],
+    },
+    {
+      id: `demo-${origin.id}-${destination.id}-bus`,
+      durationMinutes: Math.max(9, Math.ceil(distance / 300) + 8),
+      distanceMeters: distance + 500,
+      transfers: 0,
+      isRealTime: false,
+      legs: [
+        { id: "walk-bus", mode: "walk", from: origin, to: origin, durationMinutes: 4, distanceMeters: 250 },
+        { id: "bus-direct", mode: "bus", from: origin, to: destination, durationMinutes: Math.max(3, Math.ceil(distance / 300)), distanceMeters: distance, lineName: "Bus de démonstration", geometry },
+        { id: "walk-final", mode: "walk", from: destination, to: destination, durationMinutes: 4, distanceMeters: 250 },
+      ],
+    },
+  ];
+  const allowedModes = request.allowedModes ? new Set(request.allowedModes) : undefined;
+  return options.filter((option) => !allowedModes || option.legs.every((leg) => allowedModes.has(leg.mode)));
+}
+
 export class DemoTransportProvider implements TransportProvider {
   readonly descriptor = {
     id: "demo",
@@ -80,9 +146,7 @@ export class DemoTransportProvider implements TransportProvider {
     const fixtureKey = `${request.originId}:${request.destinationId}`;
     const candidates = journeyFixtures[fixtureKey];
     if (!candidates) {
-      throw new JourneyNotSupportedError(
-        `The demo provider does not support '${request.originId}' to '${request.destinationId}'.`,
-      );
+      return createGenericDemoJourneys(request);
     }
 
     const allowedModes = request.allowedModes ? new Set(request.allowedModes) : undefined;

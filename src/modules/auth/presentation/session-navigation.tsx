@@ -8,6 +8,7 @@ export async function SessionNavigation() {
   if (isAuthenticated) {
     return (
       <nav aria-label="Navigation principale">
+        <Link href="/planifier">Planifier</Link>
         <Link href="/dashboard">Tableau de bord</Link>
         <Link href="/profil">Mon profil</Link>
         <form action={signOutAction}>
@@ -19,6 +20,7 @@ export async function SessionNavigation() {
 
   return (
     <nav aria-label="Navigation principale">
+      <Link href="/planifier">Planifier</Link>
       <Link href="/connexion">Connexion</Link>
       <Link className="button button-small" href="/inscription">Créer un compte</Link>
     </nav>

@@ -1,3 +1,5 @@
+@import "maplibre-gl/dist/maplibre-gl.css";
+
 :root {
   --background: #f4f7f5;
   --surface: #ffffff;
@@ -80,6 +82,34 @@ button, input { font: inherit; }
 .diagnostics-list dt { color: var(--muted); font-size: .85rem; font-weight: 700; }
 .diagnostics-list dd { margin: 0; font-weight: 700; }
 .update-banner { position: fixed; inset: auto 1rem 1rem; z-index: 50; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .8rem 1rem; border: 1px solid var(--border); border-radius: .8rem; background: var(--surface); box-shadow: var(--shadow); }
+.planner-page { margin-block: 2.5rem 5rem; }
+.planner-page > h1 { margin: .3rem 0; font-size: clamp(2rem, 8vw, 3.5rem); }
+.planner-layout { display: grid; gap: 1.5rem; margin-top: 2rem; }
+.demo-warning { display: flex; flex-direction: column; gap: .3rem; padding: 1rem; border: 2px solid #c88400; border-radius: .8rem; background: #fff6d8; color: #5d3b00; }
+.planner-form { display: grid; gap: 1rem; padding: 1.25rem; border: 1px solid var(--border); border-radius: 1rem; background: var(--surface); box-shadow: var(--shadow); }
+.autocomplete { position: relative; }
+.autocomplete-list { position: absolute; z-index: 20; top: 100%; width: 100%; max-height: 18rem; overflow-y: auto; margin: .25rem 0 0; padding: .25rem; border: 1px solid var(--border); border-radius: .65rem; background: var(--surface); box-shadow: var(--shadow); list-style: none; }
+.autocomplete-list button { display: flex; width: 100%; flex-direction: column; gap: .2rem; padding: .7rem; border: 0; border-radius: .45rem; background: transparent; color: var(--text); text-align: left; cursor: pointer; }
+.autocomplete-list button:hover, .autocomplete-list [aria-selected="true"] button { background: var(--accent); }
+.autocomplete-list small { color: var(--muted); }
+.geolocation-box { padding: .9rem; border-left: 4px solid var(--primary); background: var(--background); }
+.geolocation-box p { color: var(--muted); line-height: 1.5; }
+.swap-button { justify-self: start; padding: .4rem .7rem; border: 0; background: transparent; color: var(--primary); font-weight: 750; cursor: pointer; }
+.date-time-grid { display: grid; gap: 1rem; grid-template-columns: 1fr 1fr; }
+.journey-results { display: grid; gap: 1.25rem; }
+.results-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; }
+.results-heading select { min-height: 2.5rem; margin-left: .4rem; padding-inline: .5rem; border: 1px solid var(--border); border-radius: .5rem; }
+.journey-list { display: grid; gap: 1rem; }
+.journey-card, .journey-details, .empty-state { padding: 1.25rem; border: 1px solid var(--border); border-radius: 1rem; background: var(--surface); box-shadow: var(--shadow); }
+.journey-card-selected { border: 2px solid var(--primary); }
+.journey-card h3 { margin: .7rem 0; }
+.badges { display: flex; flex-wrap: wrap; gap: .4rem; }
+.badges span { padding: .25rem .5rem; border-radius: 999px; background: #fff0bd; color: #624000; font-size: .75rem; font-weight: 800; }
+.timeline { display: grid; gap: 1rem; padding-left: 1.5rem; border-left: 3px solid var(--accent); }
+.timeline li { padding-left: .5rem; }
+.timeline p { margin: .35rem 0; color: var(--muted); }
+.journey-map { width: 100%; min-height: 22rem; margin-top: 1rem; border-radius: .8rem; background: #dfe8e4; }
+.map-fallback { padding: 1rem; border: 1px dashed var(--border); border-radius: .8rem; color: var(--muted); }
 
 @media (min-width: 45rem) {
   .site-header { flex-wrap: nowrap; padding-block: 0; }
@@ -88,6 +118,7 @@ button, input { font: inherit; }
   .dashboard-header { flex-direction: row; }
   .dashboard-grid { grid-template-columns: repeat(3, 1fr); }
   .diagnostics-list div { grid-template-columns: 12rem 1fr; align-items: center; }
+  .journey-list { grid-template-columns: repeat(3, 1fr); }
   .hero { padding-block: 7rem 4rem; }
 }
 

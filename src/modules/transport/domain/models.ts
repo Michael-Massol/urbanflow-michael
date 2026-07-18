@@ -17,7 +17,7 @@ export interface Coordinates {
 export interface Place {
   id: string;
   name: string;
-  kind: "station" | "stop" | "public-place";
+  kind: "station" | "stop" | "public-place" | "current-location";
   coordinates: Coordinates;
 }
 
@@ -31,6 +31,8 @@ export interface JourneyRequest {
   destinationId: string;
   departureAt?: Date;
   allowedModes?: readonly TransportMode[];
+  origin?: Place;
+  destination?: Place;
 }
 
 export interface JourneyGeometry {

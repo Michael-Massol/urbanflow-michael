@@ -1,6 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { ZodError } from "zod";
+import { getValidationErrorMessage } from "../application/get-validation-error-message.ts";
 import { updateCompleteProfile } from "../application/update-complete-profile.ts";
 import { SupabaseMobilityPreferencesRepository } from "../infrastructure/supabase-mobility-preferences-repository.ts";
 import { SupabaseProfileRepository } from "../infrastructure/supabase-profile-repository.ts";
@@ -39,7 +41,11 @@ export async function updateProfileAction(
     revalidatePath("/dashboard");
     return { status: "success", message: "Profil et préférences mis à jour." };
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Impossible de mettre à jour le profil.";
+    const message = error instanceof ZodError
+      ? getValidationErrorMessage(error)
+      : error instanceof Error
+        ? error.message
+        : "Impossible de mettre à jour le profil.";
     return { status: "error", message };
   }
 }

@@ -47,8 +47,9 @@ export function createDashboardViewModel(input: {
       },
       {
         title: "Planificateur d’itinéraires",
-        description: "La recherche multimodale arrivera en V2.",
-        status: "planned",
+        description: "Comparez des propositions multimodales de démonstration.",
+        status: "available",
+        href: "/planifier",
       },
     ],
   };

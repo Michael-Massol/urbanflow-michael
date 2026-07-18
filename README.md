@@ -1,12 +1,13 @@
 # UrbanFlow Mobility
 
-UrbanFlow est un monolithe modulaire Next.js App Router. La V1 fournit le socle responsive, l'authentification Supabase SSR, un profil minimal et les fondations PWA. La planification d'itinéraires reste hors de cette version.
+UrbanFlow est un monolithe modulaire Next.js App Router. La V2 ajoute une planification multimodale de démonstration, la géolocalisation consentie et une carte MapLibre au socle V1.
 
 ## Stack V1
 
 - Next.js 16, React 19 et TypeScript strict ;
 - Supabase Auth et PostgreSQL avec Row Level Security ;
 - CSS mobile-first sans bibliothèque UI ;
+- MapLibre GL JS pour la carte optionnelle ;
 - manifest App Router et service worker minimal ;
 - ESLint, tests Node et build Next.js.
 
@@ -72,17 +73,31 @@ TISSEO_API_KEY=
 TISSEO_GTFS_PATH=
 ```
 
-`DemoTransportProvider` fonctionne hors ligne et propose deux itinéraires déterministes pour chacun de ces parcours :
+`DemoTransportProvider` fonctionne hors ligne et propose des itinéraires déterministes. Les trois parcours historiques conservent leurs fixtures versionnées :
 
 - Toulouse-Matabiau → Capitole ;
 - Capitole → Université Paul-Sabatier ;
 - Jean-Jaurès → Arènes.
 
-La future interface doit rendre `provider.descriptor.notice` de manière visible. En mode démonstration, sa valeur est obligatoirement :
+L’interface `/planifier` rend `provider.descriptor.notice` de manière visible. En mode démonstration, sa valeur est obligatoirement :
 
 > Données de démonstration — non temps réel
 
 Le mode `tisseo` exige une clé et un `TisseoTransportAdapter` explicitement injecté. Tant que l'adaptateur réel n'est pas validé, la sélection échoue clairement au lieu de retourner de fausses données.
+
+## Planification V2
+
+La route publique `/planifier` permet de rechercher un départ et une arrivée, choisir une date et une heure, utiliser une position après consentement explicite, comparer les propositions et consulter leurs segments. Les recherches, coordonnées et résultats ne sont ni enregistrés dans Supabase ni mis en cache par le service worker.
+
+Les Route Handlers `/api/transport/places` et `/api/transport/journeys` valident les entrées, utilisent le fournisseur configuré côté serveur et répondent avec `Cache-Control: no-store`. Si une session existe, les préférences de mobilité du profil remplacent les valeurs publiques par défaut.
+
+La carte est optionnelle. Pour l’activer, renseigner une URL publique de style MapLibre :
+
+```env
+NEXT_PUBLIC_MAP_STYLE_URL=https://example.org/style.json
+```
+
+Sans cette variable, le détail textuel reste entièrement disponible et un message explique que la carte est désactivée. Les itinéraires de démonstration sont fictifs, non temps réel et impropres à un déplacement réel. La V2 ne persiste aucun historique et ne calcule aucune donnée carbone.
 
 ## GTFS Tisséo en lecture seule
 

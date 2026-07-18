@@ -6,5 +6,9 @@
   { "id": "arenes", "name": "Arènes", "kind": "station", "coordinates": { "longitude": 1.418, "latitude": 43.5935 } },
   { "id": "canal-du-midi", "name": "Canal du Midi", "kind": "station", "coordinates": { "longitude": 1.433, "latitude": 43.6159 } },
   { "id": "saint-michel-marcel-langer", "name": "Saint-Michel – Marcel-Langer", "kind": "station", "coordinates": { "longitude": 1.4459, "latitude": 43.5798 } },
-  { "id": "palais-de-justice", "name": "Palais de Justice", "kind": "station", "coordinates": { "longitude": 1.444, "latitude": 43.5926 } }
+  { "id": "palais-de-justice", "name": "Palais de Justice", "kind": "station", "coordinates": { "longitude": 1.444, "latitude": 43.5926 } },
+  { "id": "compans-caffarelli", "name": "Compans-Caffarelli", "kind": "station", "coordinates": { "longitude": 1.4351, "latitude": 43.6109 } },
+  { "id": "aeroport-toulouse-blagnac", "name": "Aéroport Toulouse-Blagnac", "kind": "public-place", "coordinates": { "longitude": 1.3678, "latitude": 43.6293 } },
+  { "id": "ramonville", "name": "Ramonville", "kind": "station", "coordinates": { "longitude": 1.4828, "latitude": 43.5556 } },
+  { "id": "borderouge", "name": "Borderouge", "kind": "station", "coordinates": { "longitude": 1.4524, "latitude": 43.6401 } }
 ]

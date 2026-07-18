@@ -23,8 +23,8 @@ test("dashboard derives a configured profile from actual mobility data", () => {
   assert.equal(dashboard.profileStatus, "complete");
   assert.equal(dashboard.profileStatusLabel, "Profil configuré");
   assert.match(dashboard.providerLabel, /Démonstration/);
-  assert.deepEqual(dashboard.features.map(({ status }) => status), ["available", "available", "planned"]);
-  assert.match(dashboard.features[2]?.description ?? "", /V2/);
+  assert.deepEqual(dashboard.features.map(({ status }) => status), ["available", "available", "available"]);
+  assert.equal(dashboard.features[2]?.href, "/planifier");
 });
 
 test("dashboard keeps a default preferences row incomplete", () => {
