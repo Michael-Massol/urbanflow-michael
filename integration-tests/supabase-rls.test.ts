@@ -18,7 +18,7 @@ const clientOptions = {
   auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
 };
 
-test("RLS isolates profiles and mobility preferences for two authenticated users", async () => {
+test("RLS isolates profiles, mobility preferences and completed journeys for two authenticated users", async () => {
   const admin = createClient(url, secretKey, clientOptions);
   const password = `Rls-${randomUUID()}-aA1!`;
   const runId = randomUUID();
@@ -70,6 +70,78 @@ test("RLS isolates profiles and mobility preferences for two authenticated users
     assert.ifError(preferencesVisibleToB.error);
     assert.deepEqual(preferencesVisibleToA.data?.map(({ user_id }) => user_id), [userA.id]);
     assert.deepEqual(preferencesVisibleToB.data?.map(({ user_id }) => user_id), [userB.id]);
+
+    const completedJourney = {
+      user_id: userA.id,
+      origin_label: "Capitole",
+      destination_label: "Jean-Jaurès",
+      departure_at: new Date().toISOString(),
+      arrival_at: new Date(Date.now() + 600_000).toISOString(),
+      duration_minutes: 10,
+      distance_meters: 1200,
+      modes: ["metro"],
+      emissions_grams_co2e: 5.33,
+      car_reference_grams_co2e: 170.4,
+      avoided_grams_co2e: 165.07,
+      factor_version: "urbanflow-ademe-2025.1",
+      provider: "demo",
+    };
+    const ownJourneyInsert = await clientA.from("completed_journeys").insert(completedJourney).select("id, user_id").single();
+    assert.ifError(ownJourneyInsert.error);
+    assert.equal(ownJourneyInsert.data.user_id, userA.id);
+    const [journeysVisibleToA, journeysVisibleToB] = await Promise.all([
+      clientA.from("completed_journeys").select("user_id"),
+      clientB.from("completed_journeys").select("user_id"),
+    ]);
+    assert.ifError(journeysVisibleToA.error);
+    assert.ifError(journeysVisibleToB.error);
+    assert.deepEqual(journeysVisibleToA.data?.map(({ user_id }) => user_id), [userA.id]);
+    assert.deepEqual(journeysVisibleToB.data, []);
+    const crossJourneyInsert = await clientA.from("completed_journeys").insert({ ...completedJourney, user_id: userB.id });
+    const anonymous = createClient(url, publishableKey, clientOptions);
+    const anonymousJourneyInsert = await anonymous.from("completed_journeys").insert(completedJourney);
+    assert.ok(anonymousJourneyInsert.error, "Une insertion non authentifiée doit être refusée");
+
+    const journeyUpdate = await clientA.from("completed_journeys")
+      .update({ duration_minutes: 99 })
+      .eq("id", ownJourneyInsert.data.id)
+      .select("duration_minutes");
+    if (!journeyUpdate.error) {
+      assert.deepEqual(journeyUpdate.data, [], "Aucune ligne confirmée ne doit être modifiable");
+    }
+    const journeyAfterUpdate = await admin.from("completed_journeys")
+      .select("duration_minutes")
+      .eq("id", ownJourneyInsert.data.id)
+      .single();
+    assert.ifError(journeyAfterUpdate.error);
+    assert.equal(journeyAfterUpdate.data.duration_minutes, 10, "Le trajet confirmé doit rester immuable");
+
+    const crossJourneyDelete = await clientB.from("completed_journeys")
+      .delete()
+      .eq("id", ownJourneyInsert.data.id)
+      .select("id");
+    assert.ifError(crossJourneyDelete.error);
+    assert.deepEqual(crossJourneyDelete.data, [], "B ne peut pas supprimer le trajet de A");
+    const journeyAfterCrossDelete = await admin.from("completed_journeys")
+      .select("id")
+      .eq("id", ownJourneyInsert.data.id)
+      .single();
+    assert.ifError(journeyAfterCrossDelete.error);
+
+    const ownJourneyDelete = await clientA.from("completed_journeys")
+      .delete()
+      .eq("id", ownJourneyInsert.data.id)
+      .select("id")
+      .single();
+    assert.ifError(ownJourneyDelete.error);
+    assert.equal(ownJourneyDelete.data.id, ownJourneyInsert.data.id);
+    const journeyAfterOwnDelete = await admin.from("completed_journeys")
+      .select("id")
+      .eq("id", ownJourneyInsert.data.id)
+      .maybeSingle();
+    assert.ifError(journeyAfterOwnDelete.error);
+    assert.equal(journeyAfterOwnDelete.data, null, "A peut supprimer son propre trajet");
+    assert.ok(crossJourneyInsert.error, "RLS doit refuser un trajet attribué à un autre utilisateur");
 
     const crossUpdate = await clientA
       .from("profiles")

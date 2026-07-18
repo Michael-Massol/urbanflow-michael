@@ -10,6 +10,7 @@ export async function SessionNavigation() {
       <nav aria-label="Navigation principale">
         <Link href="/planifier">Planifier</Link>
         <Link href="/dashboard">Tableau de bord</Link>
+        <Link href="/historique">Historique</Link>
         <Link href="/profil">Mon profil</Link>
         <form action={signOutAction}>
           <button className="nav-button" type="submit">Déconnexion</button>

@@ -1,3 +1,5 @@
+import type { CarbonEstimate } from "../../carbon-tracking/domain/models.ts";
+
 export const journeyModes = ["walking", "metro", "tram", "bus", "bike", "train"] as const;
 export type JourneyMode = (typeof journeyModes)[number];
 
@@ -57,6 +59,7 @@ export interface Journey {
   provider: string;
   realtime: boolean;
   notice?: string;
+  carbonEstimate?: CarbonEstimate;
 }
 
 export type JourneySort = "recommended" | "fastest" | "least-walking" | "fewest-transfers";

@@ -5,3 +5,4 @@
 !.env.example
 artifacts/
 node_modules/
+supabase/.temp/

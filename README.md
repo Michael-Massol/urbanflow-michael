@@ -99,6 +99,14 @@ NEXT_PUBLIC_MAP_STYLE_URL=https://example.org/style.json
 
 Sans cette variable, le détail textuel reste entièrement disponible et un message explique que la carte est désactivée. Les itinéraires de démonstration sont fictifs, non temps réel et impropres à un déplacement réel. La V2 ne persiste aucun historique et ne calcule aucune donnée carbone.
 
+## Suivi carbone V3
+
+Chaque proposition affiche une estimation calculée segment par segment en gCO₂e par passager-kilomètre et la compare à une voiture thermique moyenne diesel conduite seul. Rien n’est enregistré pendant la recherche : une première action présente précisément les données conservées et exclues, puis seule la seconde confirmation explicite crée une ligne dans `completed_journeys`. `/historique` et le résumé du dashboard sont privés et protégés par la RLS propriétaire. L’historique expose les modes, la référence voiture, la version des facteurs et permet au propriétaire de supprimer définitivement un trajet ; un trajet confirmé reste non modifiable.
+
+Le référentiel statique `urbanflow-ademe-2025.1` reprend les valeurs publiées par ADEME/Impact CO₂ : marche 0, vélo mécanique 0,17, métro 4,44, tramway 4,28, bus thermique 122, TER 27,7 et voiture thermique moyenne diesel 142 gCO₂e/passager-km. Les liens sources et hypothèses sont conservés dans `src/modules/carbon-tracking/domain/emission-factors.ts`.
+
+Ces valeurs sont des moyennes nationales. Le TER sert de référence prudente au mode générique `train`. La marche est comptée à zéro dans le périmètre retenu ; le vélo inclut la fabrication amortie publiée par Impact CO₂. L’estimation dépend des distances théoriques et ne constitue ni une mesure réelle ni un bilan de cycle de vie personnalisé. Les facteurs ne sont pas téléchargés dynamiquement en V3.
+
 ## GTFS Tisséo en lecture seule
 
 `TisseoGtfsService` charge un dossier GTFS extrait contenant au minimum :

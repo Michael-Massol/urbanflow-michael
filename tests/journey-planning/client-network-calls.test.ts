@@ -5,6 +5,7 @@ import test from "node:test";
 const clientFiles = [
   "src/modules/journey-planning/presentation/place-autocomplete.tsx",
   "src/modules/journey-planning/presentation/journey-planner.tsx",
+  "src/modules/journey-planning/presentation/journey-results.tsx",
 ];
 
 test("journey-planning client calls use same-origin relative API URLs", async () => {
@@ -13,6 +14,7 @@ test("journey-planning client calls use same-origin relative API URLs", async ()
 
   assert.match(source, /fetch\(`\/api\/transport\/places\?q=/);
   assert.match(source, /fetch\("\/api\/transport\/journeys"/);
+  assert.match(source, /fetch\("\/api\/carbon\/completed-journeys"/);
   assert.doesNotMatch(source, /https?:\/\//);
   assert.doesNotMatch(source, /localhost|NEXT_PUBLIC_(?:APP|BASE|SITE)_URL/);
 });

@@ -39,6 +39,8 @@ button, input { font: inherit; }
 .button:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
 .button:focus-visible, .nav-button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid #e3a008; outline-offset: 3px; }
 .button-secondary { background: transparent; color: var(--primary); }
+.button-danger { border-color: var(--danger); background: var(--danger); }
+.button-danger:hover { border-color: #7f1d1d; background: #7f1d1d; }
 .button-small { min-height: 2.5rem; padding: .5rem .8rem; font-size: .9rem; }
 .notice { display: flex; flex-direction: column; gap: .25rem; margin-block: 1rem 2.5rem; padding: 1rem; border: 1px solid #7ab9a6; border-radius: .8rem; background: var(--accent); }
 .notice span { color: var(--muted); }
@@ -110,6 +112,19 @@ button, input { font: inherit; }
 .timeline p { margin: .35rem 0; color: var(--muted); }
 .journey-map { width: 100%; min-height: 22rem; margin-top: 1rem; border-radius: .8rem; background: #dfe8e4; }
 .map-fallback { padding: 1rem; border: 1px dashed var(--border); border-radius: .8rem; color: var(--muted); }
+.carbon-comparison { margin-top: 1.25rem; padding: 1rem; border: 1px solid #7ab9a6; border-radius: .8rem; background: var(--accent); }
+.carbon-comparison p { line-height: 1.55; }
+.history-page { margin-block: 2.5rem 5rem; }
+.history-list { display: grid; gap: 1rem; margin-block: 1.5rem; }
+.history-card { display: grid; gap: 1rem; }
+.history-card h2 { margin-bottom: 0; }
+.history-card form { justify-self: start; }
+.history-details { display: grid; gap: .75rem; margin: 0; }
+.history-details div { display: grid; gap: .15rem; }
+.history-details dt { color: var(--muted); font-size: .85rem; font-weight: 700; }
+.history-details dd { margin: 0; }
+.confirmation-disclosure { margin-top: 1rem; padding: 1rem; border: 2px solid var(--primary); border-radius: .8rem; background: var(--surface); }
+.confirmation-disclosure h4 { margin-top: 0; }
 
 @media (min-width: 45rem) {
   .site-header { flex-wrap: nowrap; padding-block: 0; }

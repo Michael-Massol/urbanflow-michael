@@ -1,4 +1,5 @@
 import type { TransportProvider } from "../../transport/domain/transport-provider.ts";
+import { calculateCarbonEstimate } from "../../carbon-tracking/domain/calculate-carbon-estimate.ts";
 import type { JourneyPlanResult } from "../domain/models.ts";
 import { planJourneyInputSchema } from "../domain/schemas.ts";
 import { sortJourneys } from "./sort-journeys.ts";
@@ -21,7 +22,8 @@ export async function planJourney(provider: TransportProvider, input: unknown): 
   });
   const journeys = options
     .map((option) => toJourney(option, departureAt, provider.descriptor))
-    .filter((journey) => journey.walkingMinutes <= criteria.maxWalkingMinutes);
+    .filter((journey) => journey.walkingMinutes <= criteria.maxWalkingMinutes)
+    .map((journey) => ({ ...journey, carbonEstimate: calculateCarbonEstimate(journey) }));
   return {
     journeys: sortJourneys(journeys, "recommended", criteria.preferredModes),
     ...(provider.descriptor.notice ? { notice: provider.descriptor.notice } : {}),
