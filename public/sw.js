@@ -1,4 +1,4 @@
-const CACHE_NAME = "urbanflow-shell-v2";
+const CACHE_NAME = "urbanflow-shell-v3";
 const OFFLINE_URL = "/hors-ligne";
 const PRECACHE_URLS = [OFFLINE_URL, "/icon-192.png", "/icon-512.png"];
 

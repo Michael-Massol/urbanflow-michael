@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { SessionNavigation } from "@/modules/auth/presentation/session-navigation";
 import { ServiceWorkerRegistration } from "@/modules/pwa/presentation/service-worker-registration";
+import { THEME_INITIALIZATION_SCRIPT } from "@/modules/theme/presentation/theme-initialization";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,12 +16,18 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: "#0b6b53",
-  colorScheme: "light",
+  colorScheme: "light dark",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="fr">
+    <html lang="fr" suppressHydrationWarning>
+      <head>
+        <script
+          id="urbanflow-theme-initialization"
+          dangerouslySetInnerHTML={{ __html: THEME_INITIALIZATION_SCRIPT }}
+        />
+      </head>
       <body>
         <a className="skip-link" href="#main-content">Aller au contenu</a>
         <header className="site-header">

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThemeSelector } from "@/modules/theme/presentation/theme-selector";
 import { getServerUserId } from "../infrastructure/get-server-user-id";
 import { signOutAction } from "./auth-actions";
 
@@ -16,6 +17,7 @@ export async function SessionNavigation() {
         <form action={signOutAction}>
           <button className="nav-button" type="submit">Déconnexion</button>
         </form>
+        <ThemeSelector />
       </nav>
     );
   }
@@ -26,6 +28,7 @@ export async function SessionNavigation() {
       <Link href="/politique-de-confidentialite">Confidentialité</Link>
       <Link href="/connexion">Connexion</Link>
       <Link className="button button-small" href="/inscription">Créer un compte</Link>
+      <ThemeSelector />
     </nav>
   );
 }

@@ -53,7 +53,7 @@ Renseigner aussi `NEXT_PUBLIC_PRIVACY_CONTACT_EMAIL` avant une publication publi
 Le profil permet de modifier le nom affiché, les modes préférés ou évités, la durée maximale de marche et la prise en compte d'une mobilité réduite. Les pages `/profil`, `/dashboard` et `/diagnostics/transport` vérifient la session côté serveur et redirigent vers `/connexion` sans utilisateur authentifié.
 
 Le diagnostic transport expose uniquement le fournisseur, sa notice, la disponibilité booléenne du GTFS local et son statut. Il ne retourne jamais de clé API, de jeton ni de chemin local.
-
+git
 ## Fournisseurs de transport
 
 Le domaine dépend uniquement de `TransportProvider` :
