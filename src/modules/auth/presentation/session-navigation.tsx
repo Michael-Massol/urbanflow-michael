@@ -9,11 +9,11 @@ export async function SessionNavigation() {
   if (isAuthenticated) {
     return (
       <nav aria-label="Navigation principale">
-        <Link href="/planifier">Planifier</Link>
-        <Link href="/dashboard">Tableau de bord</Link>
-        <Link href="/historique">Historique</Link>
-        <Link href="/profil">Mon profil</Link>
-        <Link href="/confidentialite">Confidentialité</Link>
+        <Link href="/planifier" prefetch={false}>Planifier</Link>
+        <Link href="/dashboard" prefetch={false}>Tableau de bord</Link>
+        <Link href="/historique" prefetch={false}>Historique</Link>
+        <Link href="/profil" prefetch={false}>Mon profil</Link>
+        <Link href="/confidentialite" prefetch={false}>Confidentialité</Link>
         <form action={signOutAction}>
           <button className="nav-button" type="submit">Déconnexion</button>
         </form>
@@ -24,10 +24,10 @@ export async function SessionNavigation() {
 
   return (
     <nav aria-label="Navigation principale">
-      <Link href="/planifier">Planifier</Link>
-      <Link href="/politique-de-confidentialite">Confidentialité</Link>
-      <Link href="/connexion">Connexion</Link>
-      <Link className="button button-small" href="/inscription">Créer un compte</Link>
+      <Link href="/planifier" prefetch={false}>Planifier</Link>
+      <Link href="/politique-de-confidentialite" prefetch={false}>Confidentialité</Link>
+      <Link href="/connexion" prefetch={false}>Connexion</Link>
+      <Link className="button button-small" href="/inscription" prefetch={false}>Créer un compte</Link>
       <ThemeSelector />
     </nav>
   );

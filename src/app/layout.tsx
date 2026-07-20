@@ -35,7 +35,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body>
         <a className="skip-link" href="#main-content">Aller au contenu</a>
         <header className="site-header">
-          <Link className="brand" href="/" aria-label="UrbanFlow Mobility — Accueil">
+          <Link className="brand" href="/" prefetch={false} aria-label="UrbanFlow Mobility — Accueil">
             <span aria-hidden="true" className="brand-mark">UF</span>
             <span>UrbanFlow</span>
           </Link>
@@ -44,7 +44,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <main id="main-content" tabIndex={-1}>{children}</main>
         <footer className="site-footer">
           <p>UrbanFlow Mobility — Prototype étudiant de mobilité durable.</p>
-          <Link href="/politique-de-confidentialite">Politique de confidentialité</Link>
+          <Link href="/politique-de-confidentialite" prefetch={false}>Politique de confidentialité</Link>
         </footer>
         <ServiceWorkerRegistration />
       </body>

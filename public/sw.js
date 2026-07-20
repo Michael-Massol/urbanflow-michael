@@ -1,10 +1,7 @@
-const CACHE_NAME = "urbanflow-shell-v4";
+const CACHE_NAME = "urbanflow-shell-v5";
 const OFFLINE_URL = "/hors-ligne";
 const PRECACHE_URLS = [
   OFFLINE_URL,
-  "/icons/icon-192.png",
-  "/icons/icon-512.png",
-  "/icons/icon-maskable-512.png",
 ];
 
 self.addEventListener("install", (event) => {

@@ -36,14 +36,14 @@ export default async function DashboardPage() {
       <aside className="notice" aria-label="Résumé carbone">
         <strong>Votre bilan carbone</strong>
         <span>{carbonSummary.journeyCount} trajet(s) confirmé(s) · {carbonSummary.emissionsGramsCo2e.toLocaleString("fr-FR")} g CO₂e estimés · {carbonSummary.avoidedGramsCo2e.toLocaleString("fr-FR")} g CO₂e évités face à la voiture thermique.</span>
-        <Link className="text-link" href="/historique">Consulter l’historique</Link>
+        <Link className="text-link" href="/historique" prefetch={false}>Consulter l’historique</Link>
       </aside>
       <div className="dashboard-grid">
         {viewModel.features.map((feature) => (
           <article className="dashboard-card" key={feature.title}>
             <span className={`status-pill status-${feature.status}`}>{feature.status === "available" ? "Disponible" : "À venir"}</span>
             <h2>{feature.title}</h2><p>{feature.description}</p>
-            {feature.href ? <Link className="text-link" href={feature.href}>Ouvrir</Link> : null}
+            {feature.href ? <Link className="text-link" href={feature.href} prefetch={false}>Ouvrir</Link> : null}
           </article>
         ))}
       </div>
