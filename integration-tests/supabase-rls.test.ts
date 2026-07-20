@@ -18,6 +18,30 @@ const clientOptions = {
   auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
 };
 
+interface SupabaseResultWithError {
+  error: { code?: string; message: string } | null;
+}
+
+const jwtClockSkewRetryDelaysMs = [250, 500, 1_000, 2_000, 4_000] as const;
+
+function isJwtIssuedInFuture(error: SupabaseResultWithError["error"]): boolean {
+  return error?.code === "PGRST303" && /JWT issued at future/i.test(error.message);
+}
+
+async function retryJwtClockSkew<T extends SupabaseResultWithError>(
+  operation: () => PromiseLike<T>,
+): Promise<T> {
+  let result = await operation();
+
+  for (const delayMs of jwtClockSkewRetryDelaysMs) {
+    if (!isJwtIssuedInFuture(result.error)) return result;
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
+    result = await operation();
+  }
+
+  return result;
+}
+
 test("RLS isolates profiles, mobility preferences and completed journeys for two authenticated users", async () => {
   const admin = createClient(url, secretKey, clientOptions);
   const password = `Rls-${randomUUID()}-aA1!`;
@@ -54,8 +78,8 @@ test("RLS isolates profiles, mobility preferences and completed journeys for two
     assert.ifError(sessionB.error);
 
     const [visibleToA, visibleToB] = await Promise.all([
-      clientA.from("profiles").select("user_id, display_name"),
-      clientB.from("profiles").select("user_id, display_name"),
+      retryJwtClockSkew(() => clientA.from("profiles").select("user_id, display_name")),
+      retryJwtClockSkew(() => clientB.from("profiles").select("user_id, display_name")),
     ]);
     assert.ifError(visibleToA.error);
     assert.ifError(visibleToB.error);
@@ -63,8 +87,8 @@ test("RLS isolates profiles, mobility preferences and completed journeys for two
     assert.deepEqual(visibleToB.data?.map(({ user_id }) => user_id), [userB.id]);
 
     const [preferencesVisibleToA, preferencesVisibleToB] = await Promise.all([
-      clientA.from("mobility_preferences").select("user_id, max_walking_minutes"),
-      clientB.from("mobility_preferences").select("user_id, max_walking_minutes"),
+      retryJwtClockSkew(() => clientA.from("mobility_preferences").select("user_id, max_walking_minutes")),
+      retryJwtClockSkew(() => clientB.from("mobility_preferences").select("user_id, max_walking_minutes")),
     ]);
     assert.ifError(preferencesVisibleToA.error);
     assert.ifError(preferencesVisibleToB.error);
