@@ -31,3 +31,9 @@ test("PWA icon files are valid PNG images with the declared dimensions", async (
     assert.equal(image.readUInt32BE(20), expectedSize);
   }
 });
+
+test("root metadata exposes the UrbanFlow icon as the browser tab icon", async () => {
+  const source = await readFile("src/app/layout.tsx", "utf8");
+  assert.match(source, /icon: \[\{ url: "\/icons\/icon-192\.png", sizes: "192x192", type: "image\/png" \}\]/);
+  assert.match(source, /shortcut: "\/icons\/icon-192\.png"/);
+});

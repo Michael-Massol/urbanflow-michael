@@ -10,6 +10,10 @@ export const metadata: Metadata = {
   description: "Mobilité urbaine intelligente et durable à Toulouse.",
   applicationName: "UrbanFlow Mobility",
   manifest: "/manifest.webmanifest",
+  icons: {
+    icon: [{ url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }],
+    shortcut: "/icons/icon-192.png",
+  },
 };
 
 export const viewport: Viewport = {
