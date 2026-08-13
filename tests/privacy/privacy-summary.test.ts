@@ -24,6 +24,6 @@ test("privacy summary reports stored categories without exposing their content",
     hasProfile: true,
     hasMobilityPreferences: false,
     completedJourneyCount: 0,
-    storesPreciseLocations: false,
+    storesConfirmedJourneyGeometry: false,
   });
 });

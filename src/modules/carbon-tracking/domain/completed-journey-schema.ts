@@ -1,11 +1,6 @@
 import { z } from "zod";
 import { journeyModes } from "../../journey-planning/domain/models.ts";
-import { journeyPlaceSchema } from "../../journey-planning/domain/schemas.ts";
-
-const geometrySchema = z.object({
-  type: z.literal("LineString"),
-  coordinates: z.array(z.tuple([z.number(), z.number()])).min(2),
-});
+import { journeyGeometrySchema, journeyPlaceSchema } from "../../journey-planning/domain/schemas.ts";
 
 const segmentSchema = z.object({
   id: z.string().min(1),
@@ -19,7 +14,7 @@ const segmentSchema = z.object({
   lineName: z.string().optional(),
   direction: z.string().optional(),
   stopCount: z.number().int().nonnegative().optional(),
-  geometry: geometrySchema.optional(),
+  geometry: journeyGeometrySchema.optional(),
   accessibility: z.string().optional(),
 });
 
@@ -32,7 +27,7 @@ export const completedJourneyInputSchema = z.object({
   transferCount: z.number().int().nonnegative(),
   modes: z.array(z.enum(journeyModes)).min(1),
   segments: z.array(segmentSchema).min(1),
-  geometry: geometrySchema.optional(),
+  geometry: journeyGeometrySchema.optional(),
   provider: z.string().min(1),
   realtime: z.boolean(),
   notice: z.string().optional(),

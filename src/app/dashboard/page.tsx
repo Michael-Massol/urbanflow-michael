@@ -6,10 +6,10 @@ import { signOutAction } from "@/modules/auth/presentation/auth-actions";
 import { getCarbonSummary } from "@/modules/carbon-tracking/application/get-carbon-summary";
 import { SupabaseCompletedJourneyRepository } from "@/modules/carbon-tracking/infrastructure/supabase-completed-journey-repository";
 import { createDashboardViewModel } from "@/modules/dashboard/application/create-dashboard-view-model";
+import { getServerTransportProvider } from "@/modules/journey-planning/infrastructure/get-server-transport-provider";
 import { SupabaseMobilityPreferencesRepository } from "@/modules/profile/infrastructure/supabase-mobility-preferences-repository";
 import { SupabaseProfileRepository } from "@/modules/profile/infrastructure/supabase-profile-repository";
 import { createUserSupabaseClient } from "@/modules/supabase/infrastructure/server-client";
-import { getServerTransportDiagnostics } from "@/modules/transport/infrastructure/get-server-transport-diagnostics";
 
 export const metadata: Metadata = { title: "Tableau de bord" };
 export const dynamic = "force-dynamic";
@@ -18,13 +18,13 @@ export default async function DashboardPage() {
   const userId = await getServerUserId();
   if (!userId) redirect("/connexion");
   const client = await createUserSupabaseClient();
-  const [profile, preferences, diagnostics, completedJourneys] = await Promise.all([
+  const provider = getServerTransportProvider().descriptor.id === "tisseo" ? "tisseo" : "demo";
+  const [profile, preferences, completedJourneys] = await Promise.all([
     new SupabaseProfileRepository(client).findByUserId(userId),
     new SupabaseMobilityPreferencesRepository(client).findByUserId(userId),
-    getServerTransportDiagnostics(),
     new SupabaseCompletedJourneyRepository(client).listByUserId(userId),
   ]);
-  const viewModel = createDashboardViewModel({ profile, preferences, provider: diagnostics.provider });
+  const viewModel = createDashboardViewModel({ profile, preferences, provider });
   const carbonSummary = getCarbonSummary(completedJourneys);
 
   return (

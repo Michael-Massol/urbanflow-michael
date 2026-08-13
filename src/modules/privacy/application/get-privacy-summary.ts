@@ -12,6 +12,8 @@ export async function getPrivacySummary(
     hasProfile: snapshot.profile !== null,
     hasMobilityPreferences: snapshot.mobilityPreferences !== null,
     completedJourneyCount: snapshot.completedJourneys.length,
-    storesPreciseLocations: false,
+    storesConfirmedJourneyGeometry: snapshot.completedJourneys.some(
+      (journey) => journey.geometry !== null,
+    ),
   };
 }

@@ -31,6 +31,8 @@ export interface JourneyRequest {
   destinationId: string;
   departureAt?: Date;
   allowedModes?: readonly TransportMode[];
+  maxWalkingMinutes?: number;
+  reducedMobility?: boolean;
   origin?: Place;
   destination?: Place;
 }
@@ -46,13 +48,21 @@ export interface JourneyLeg {
   from: Place;
   to: Place;
   durationMinutes: number;
+  durationSeconds?: number;
   distanceMeters: number;
+  departureAt?: Date;
+  arrivalAt?: Date;
   lineName?: string;
+  direction?: string;
+  stopCount?: number;
+  accessibility?: string;
   geometry?: JourneyGeometry;
 }
 
 export interface JourneyOption {
   id: string;
+  departureAt?: Date;
+  arrivalAt?: Date;
   durationMinutes: number;
   distanceMeters: number;
   transfers: number;

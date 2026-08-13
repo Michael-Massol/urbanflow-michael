@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { createCurrentLocationPlace } from "../application/create-current-location-place";
 import { sortJourneys } from "../application/sort-journeys";
 import type { ActionResult, Journey, JourneyPlanResult, JourneyPlace, JourneySort } from "../domain/models";
+import type { TransportProviderDescriptor } from "../../transport/domain/models";
 import { PlaceAutocomplete } from "./place-autocomplete";
 import { JourneyResults } from "./journey-results";
 
@@ -12,7 +13,15 @@ function initialDate() {
   return { date: date.toISOString().slice(0, 10), time: date.toTimeString().slice(0, 5) };
 }
 
-export function JourneyPlanner({ mapStyleUrl }: { mapStyleUrl?: string }) {
+export function JourneyPlanner({
+  mapStyleUrl,
+  provider,
+  showAccessibility,
+}: {
+  mapStyleUrl?: string;
+  provider: TransportProviderDescriptor;
+  showAccessibility: boolean;
+}) {
   const initial = initialDate();
   const [origin, setOrigin] = useState<JourneyPlace | null>(null);
   const [destination, setDestination] = useState<JourneyPlace | null>(null);
@@ -67,7 +76,11 @@ export function JourneyPlanner({ mapStyleUrl }: { mapStyleUrl?: string }) {
 
   return (
     <div className="planner-layout">
-      <aside className="demo-warning" role="note"><strong>Données de démonstration — non temps réel</strong><span>Ces propositions sont fictives et impropres à un déplacement réel.</span></aside>
+      {provider.isDemo ? (
+        <aside className="demo-warning" role="note"><strong>Données de démonstration — non temps réel</strong><span>Ces propositions sont fictives et impropres à un déplacement réel.</span></aside>
+      ) : (
+        <aside className="notice" role="note"><strong>Tisséo</strong><span>{provider.notice ?? "Horaires fournis par Tisséo."}</span></aside>
+      )}
       <form className="planner-form" onSubmit={submit}>
         <PlaceAutocomplete id="origin" label="Départ" selectedPlace={origin} onSelect={setOrigin} />
         <div className="geolocation-box"><p>Votre position sert uniquement à définir le départ. Elle n’est ni enregistrée ni envoyée à Supabase. La saisie manuelle reste possible.</p><button className="button button-secondary" type="button" onClick={useCurrentLocation}>Utiliser ma position</button><p aria-live="polite">{geoMessage}</p></div>
@@ -77,7 +90,7 @@ export function JourneyPlanner({ mapStyleUrl }: { mapStyleUrl?: string }) {
         {error ? <p className="form-message" role="alert">{error}</p> : null}
         <button className="button" type="submit" disabled={loading}>{loading ? "Recherche en cours…" : "Rechercher des itinéraires"}</button>
       </form>
-      {result ? <><p className="demo-warning"><strong>{result.notice}</strong></p><JourneyResults journeys={sortedJourneys} selected={selected} sort={sort} onSort={setSort} onSelect={(journey: Journey) => setSelectedId(journey.id)} {...(mapStyleUrl ? { mapStyleUrl } : {})} /></> : null}
+      {result ? <>{result.notice ? <p className={result.isDemo ? "demo-warning" : "notice"}><strong>{result.notice}</strong></p> : null}<JourneyResults journeys={sortedJourneys} selected={selected} sort={sort} onSort={setSort} onSelect={(journey: Journey) => setSelectedId(journey.id)} showAccessibility={showAccessibility} {...(mapStyleUrl ? { mapStyleUrl } : {})} /></> : null}
     </div>
   );
 }

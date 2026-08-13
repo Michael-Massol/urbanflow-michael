@@ -2,7 +2,7 @@ import type { CarbonSummary, CompletedJourney } from "../../carbon-tracking/doma
 import type { MobilityPreferences } from "../../profile/domain/mobility-preferences.ts";
 import type { Profile } from "../../profile/domain/profile.ts";
 
-export const USER_DATA_EXPORT_VERSION = "1.0" as const;
+export const USER_DATA_EXPORT_VERSION = "1.1" as const;
 export const ACCOUNT_DELETION_CONFIRMATION = "SUPPRIMER MON COMPTE" as const;
 
 export interface PrivacyDataSnapshot {
@@ -49,5 +49,5 @@ export interface PrivacySummary {
   hasProfile: boolean;
   hasMobilityPreferences: boolean;
   completedJourneyCount: number;
-  storesPreciseLocations: false;
+  storesConfirmedJourneyGeometry: boolean;
 }

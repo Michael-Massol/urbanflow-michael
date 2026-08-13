@@ -43,7 +43,7 @@ export function summarizePayload(payload: unknown): PayloadSummary {
 
   function visit(value: unknown, path: string): void {
     if (typeof value === "string") {
-      if (/polyline|geometry|shape/i.test(path) && value.length > 5) {
+      if (/polyline|geometry|shape|\.wkt$/i.test(path) && value.length > 5) {
         geometry.push({ path, kind: "encoded-string" });
       }
       return;

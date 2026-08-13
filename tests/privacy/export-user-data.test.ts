@@ -37,6 +37,7 @@ const snapshot: PrivacyDataSnapshot = {
     avoidedGramsCo2e: 165.07,
     factorVersion: "urbanflow-ademe-2025.1",
     provider: "demo",
+    geometry: { type: "LineString", coordinates: [[1.44, 43.6], [1.45, 43.61]] },
     confirmedAt: "2026-07-17T10:15:00.000Z",
   }],
 };
@@ -59,20 +60,21 @@ test("personal export is deterministic and contains only the owner's useful data
     new Date("2026-07-18T00:00:00.000Z"),
   );
 
-  assert.equal(result.exportVersion, "1.0");
+  assert.equal(result.exportVersion, "1.1");
   assert.equal(result.generatedAt, "2026-07-18T00:00:00.000Z");
   assert.equal(result.user.id, "user-a");
   assert.equal(result.user.profile?.displayName, "Camille");
   assert.equal(result.completedJourneys.length, 1);
+  assert.deepEqual(result.completedJourneys[0]?.geometry?.coordinates, [[1.44, 43.6], [1.45, 43.61]]);
   assert.equal(result.carbonSummary.journeyCount, 1);
   assert.equal(result.carbonSummary.avoidedGramsCo2e, 165.07);
 });
 
-test("personal export excludes tokens, passwords, precise coordinates and redundant owner fields", async () => {
+test("personal export excludes secrets, raw provider data and redundant owner fields", async () => {
   const result = await exportUserData(new StubPrivacyRepository(snapshot), "user-a");
   const serialized = JSON.stringify(result);
 
-  for (const forbidden of ["password", "token", "secret", "latitude", "longitude", "rawTisseo"]) {
+  for (const forbidden of ["password", "token", "secret", "rawTisseo"]) {
     assert.doesNotMatch(serialized.toLowerCase(), new RegExp(forbidden.toLowerCase()));
   }
   assert.equal("userId" in (result.user.profile ?? {}), false);

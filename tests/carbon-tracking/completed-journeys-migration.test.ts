@@ -18,3 +18,15 @@ test("completed journeys are exposed only to authenticated users before owner RL
   assert.match(migration, /revoke update on public\.completed_journeys from authenticated/i);
   assert.doesNotMatch(migration, /create policy[^;]*update/i);
 });
+
+test("confirmed journey geometry is nullable, constrained and stored in the owner row", async () => {
+  const migration = await readFile(
+    "supabase/migrations/202608130001_add_completed_journey_geometry.sql",
+    "utf8",
+  );
+
+  assert.match(migration, /add column if not exists geometry_snapshot jsonb null/i);
+  assert.match(migration, /geometry_snapshot ->> 'type' = 'LineString'/i);
+  assert.match(migration, /jsonb_array_length\(geometry_snapshot -> 'coordinates'\) >= 2/i);
+  assert.doesNotMatch(migration, /create table/i);
+});

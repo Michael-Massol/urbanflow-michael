@@ -23,10 +23,10 @@ export default function PrivacyPolicyPage() {
       <ul>
         <li>adresse e-mail et identifiant technique du compte ;</li>
         <li>nom affiché et préférences de mobilité ;</li>
-        <li>trajets explicitement confirmés : libellés publics, horaires, durée, distance, modes et estimations carbone.</li>
+        <li>trajets explicitement confirmés : libellés publics, horaires, durée, distance, modes, estimations carbone et tracé cartographique normalisé lorsqu’il est disponible.</li>
       </ul>
       <p>
-        Les recherches non confirmées, la position précise, les mots de passe, les réponses brutes Tisséo et
+        Les recherches non confirmées, la position précise fournie par le navigateur, les mots de passe, les réponses brutes Tisséo et
         les données d’autres utilisateurs ne sont pas intégrés à l’historique.
       </p>
 
@@ -35,6 +35,11 @@ export default function PrivacyPolicyPage() {
         Le navigateur demande un consentement explicite avant tout accès à la position. Elle sert uniquement
         à préparer la recherche en cours, n’est pas stockée dans Supabase et n’est pas incluse dans l’export.
         Le refus n’empêche pas la saisie manuelle d’un lieu.
+      </p>
+      <p>
+        Pour un trajet explicitement confirmé, UrbanFlow conserve uniquement une ligne cartographique normalisée
+        afin de restituer le trajet dans l’historique sans rappeler Tisséo. Ce tracé est inclus dans l’export et
+        supprimé avec le trajet ou le compte.
       </p>
 
       <h2>Base, destinataires et conservation</h2>

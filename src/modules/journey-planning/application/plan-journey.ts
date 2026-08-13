@@ -19,6 +19,8 @@ export async function planJourney(provider: TransportProvider, input: unknown): 
     destination: toProviderPlace(criteria.destination),
     departureAt,
     allowedModes,
+    maxWalkingMinutes: criteria.maxWalkingMinutes,
+    reducedMobility: criteria.reducedMobility,
   });
   const journeys = options
     .map((option) => toJourney(option, departureAt, provider.descriptor))
@@ -28,6 +30,6 @@ export async function planJourney(provider: TransportProvider, input: unknown): 
     journeys: sortJourneys(journeys, "recommended", criteria.preferredModes),
     ...(provider.descriptor.notice ? { notice: provider.descriptor.notice } : {}),
     isDemo: provider.descriptor.isDemo,
-    isRealTime: provider.descriptor.isRealTime,
+    isRealTime: journeys.length > 0 && journeys.every((journey) => journey.realtime),
   };
 }

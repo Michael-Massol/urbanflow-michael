@@ -51,7 +51,7 @@ if (apiKey) {
       authentication: "configured",
     },
     {
-      name: "places-short-term-error",
+      name: "places-short-term-behavior",
       endpoint: "places.json",
       params: { term: "ca", number: "2" },
       authentication: "configured",

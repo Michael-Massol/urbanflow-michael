@@ -1,0 +1,28 @@
+{
+  "expirationDate": "2026-08-10 17:35",
+  "placesList": {
+    "place": [
+      {
+        "category": "Arrêts",
+        "className": "stop",
+        "id": "stop_area:SA_1715",
+        "key": "Capitole Toulouse",
+        "label": "Capitole (Toulouse)",
+        "network": "Tisséo",
+        "rank": "1",
+        "x": "1.445537",
+        "y": "43.604465"
+      },
+      {
+        "category": "Adresses",
+        "className": "address",
+        "id": "1.442736;43.604866",
+        "key": "18 Place Du Capitole TOULOUSE",
+        "label": "18 Place Du Capitole (TOULOUSE)",
+        "rank": "2",
+        "x": "1.442736",
+        "y": "43.604866"
+      }
+    ]
+  }
+}

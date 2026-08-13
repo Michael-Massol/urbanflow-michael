@@ -5,3 +5,4 @@ export * from "./infrastructure/config/select-transport-provider.ts";
 export * from "./infrastructure/config/transport-config.ts";
 export * from "./infrastructure/demo/demo-transport-provider.ts";
 export * from "./infrastructure/gtfs/tisseo-gtfs-service.ts";
+export * from "./infrastructure/tisseo/tisseo-transport-adapter.ts";

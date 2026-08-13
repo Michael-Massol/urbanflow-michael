@@ -47,7 +47,9 @@ export function createDashboardViewModel(input: {
       },
       {
         title: "Planificateur d’itinéraires",
-        description: "Comparez des propositions multimodales de démonstration.",
+        description: input.provider === "tisseo"
+          ? "Comparez des itinéraires calculés par Tisséo."
+          : "Comparez des propositions multimodales de démonstration.",
         status: "available",
         href: "/planifier",
       },

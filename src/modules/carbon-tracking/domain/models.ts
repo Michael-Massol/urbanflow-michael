@@ -1,4 +1,4 @@
-import type { JourneyMode } from "../../journey-planning/domain/models.ts";
+import type { JourneyGeometry, JourneyMode } from "../../journey-planning/domain/models.ts";
 
 export type CarbonMode = JourneyMode | "car_thermal_reference";
 
@@ -35,6 +35,7 @@ export interface CompletedJourney {
   avoidedGramsCo2e: number;
   factorVersion: string;
   provider: string;
+  geometry: JourneyGeometry | null;
   confirmedAt: string;
 }
 

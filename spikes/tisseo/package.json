@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "probe": "node --experimental-strip-types src/probe.ts",
+    "probe": "node --env-file-if-exists=.env.local --experimental-strip-types src/probe.ts",
     "test": "node --experimental-strip-types --test tests/*.test.ts",
     "typecheck": "tsc --noEmit"
   },

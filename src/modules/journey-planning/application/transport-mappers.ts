@@ -1,5 +1,6 @@
 import type { JourneyLeg, JourneyOption, Place, TransportMode } from "../../transport/domain/models.ts";
-import type { Journey, JourneyGeometry, JourneyMode, JourneyPlace } from "../domain/models.ts";
+import type { Journey, JourneyGeometry, JourneyMode, JourneyPlace, JourneySegment } from "../domain/models.ts";
+import { mergeConsecutiveWalkingSegments } from "./merge-consecutive-walking-segments.ts";
 
 export const toProviderMode: Record<JourneyMode, TransportMode> = {
   walking: "walk",
@@ -62,10 +63,12 @@ export function toJourney(
   departureAt: Date,
   provider: { id: string; notice?: string },
 ): Journey {
-  let cursor = departureAt;
-  const segments = option.legs.map((leg) => {
-    const segmentDeparture = cursor;
-    cursor = new Date(cursor.getTime() + leg.durationMinutes * 60_000);
+  const optionDepartureAt = option.departureAt ?? departureAt;
+  let cursor = optionDepartureAt;
+  const normalizedSegments: JourneySegment[] = option.legs.map((leg) => {
+    const segmentDeparture = leg.departureAt ?? cursor;
+    const segmentArrival = leg.arrivalAt ?? new Date(segmentDeparture.getTime() + leg.durationMinutes * 60_000);
+    cursor = segmentArrival;
     const geometry = legGeometry(leg);
     return {
       id: leg.id,
@@ -73,23 +76,33 @@ export function toJourney(
       origin: toJourneyPlace(leg.from, provider.id),
       destination: toJourneyPlace(leg.to, provider.id),
       departureAt: segmentDeparture.toISOString(),
-      arrivalAt: cursor.toISOString(),
+      arrivalAt: segmentArrival.toISOString(),
       durationMinutes: leg.durationMinutes,
       distanceMeters: leg.distanceMeters,
       ...(leg.lineName ? { lineName: leg.lineName } : {}),
-      ...(leg.lineName ? { direction: leg.to.name } : {}),
+      ...(leg.direction ? { direction: leg.direction } : leg.lineName ? { direction: leg.to.name } : {}),
+      ...(leg.stopCount !== undefined ? { stopCount: leg.stopCount } : {}),
       ...(geometry ? { geometry } : {}),
-      accessibility: "Information non disponible en démonstration",
+      ...(leg.accessibility
+        ? { accessibility: leg.accessibility }
+        : provider.id === "demo"
+          ? { accessibility: "Information non disponible en démonstration" }
+          : {}),
     };
   });
+  const segments = provider.id === "tisseo"
+    ? mergeConsecutiveWalkingSegments(normalizedSegments)
+    : normalizedSegments;
   const modes = [...new Set(segments.map((segment) => segment.mode))];
   const geometry = combinedGeometry(option.legs);
   return {
     id: option.id,
-    departureAt: departureAt.toISOString(),
-    arrivalAt: new Date(departureAt.getTime() + option.durationMinutes * 60_000).toISOString(),
+    departureAt: optionDepartureAt.toISOString(),
+    arrivalAt: (option.arrivalAt ?? new Date(optionDepartureAt.getTime() + option.durationMinutes * 60_000)).toISOString(),
     durationMinutes: option.durationMinutes,
-    walkingMinutes: segments.filter((segment) => segment.mode === "walking").reduce((total, segment) => total + segment.durationMinutes, 0),
+    walkingMinutes: Math.ceil(option.legs
+      .filter((leg) => leg.mode === "walk")
+      .reduce((total, leg) => total + (leg.durationSeconds ?? leg.durationMinutes * 60), 0) / 60),
     transferCount: option.transfers,
     modes,
     segments,

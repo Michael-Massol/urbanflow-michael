@@ -1,0 +1,95 @@
+{
+  "expirationDate": "2026-08-10 17:35",
+  "routePlannerResult": {
+    "query": {
+      "roadMode": "walk"
+    },
+    "journeys": [
+      {
+        "journey": {
+          "departureDateTime": "2026-08-10 17:24:35",
+          "arrivalDateTime": "2026-08-10 17:28:26",
+          "duration": "00:03:51",
+          "co2_emissions": "4.130",
+          "chunks": [
+            {
+              "street": {
+                "arrivalTime": "17:24:57",
+                "departureTime": "17:24:35",
+                "duration": "00:00:22",
+                "length": "19",
+                "roadMode": "walk",
+                "startAddress": {
+                  "connectionPlace": { "latitude": "43.604465", "longitude": "1.445537" }
+                },
+                "endAddress": {
+                  "address": { "latitude": "43.604370", "longitude": "1.445364", "streetName": "Chemin piéton" }
+                },
+                "wkt": "MULTILINESTRING ((1.445530 43.604460, 1.445352 43.604363))"
+              }
+            },
+            {
+              "stop": {
+                "connectionPlace": {
+                  "city": "TOULOUSE",
+                  "id": "stop_area:SA_1715",
+                  "latitude": "43.604466",
+                  "longitude": "1.445537",
+                  "name": "Capitole"
+                },
+                "name": "Capitole"
+              }
+            },
+            {
+              "service": {
+                "destinationStop": {
+                  "id": "stop_area:SA_1068",
+                  "name": "Balma-Gramont BALMA",
+                  "line": {
+                    "id": "line:61",
+                    "name": "Basso Cambo / Balma - Gramont",
+                    "network": "Tisséo",
+                    "shortName": "A",
+                    "transportMode": { "id": "commercial_mode:1", "name": "métro" }
+                  }
+                },
+                "duration": "00:02:33",
+                "firstArrivalTime": "17:27",
+                "firstDepartureTime": "17:25",
+                "wkt": "LINESTRING (1.445550 43.604470, 1.450590 43.606710, 1.455580 43.610120)"
+              }
+            },
+            {
+              "stop": {
+                "connectionPlace": {
+                  "city": "TOULOUSE",
+                  "id": "stop_area:SA_1357",
+                  "latitude": "43.610370",
+                  "longitude": "1.455540",
+                  "name": "Marengo-SNCF"
+                },
+                "name": "Marengo-SNCF"
+              }
+            },
+            {
+              "street": {
+                "arrivalTime": "17:28:25",
+                "departureTime": "17:27:39",
+                "duration": "00:00:46",
+                "length": "44",
+                "roadMode": "walk",
+                "startAddress": {
+                  "connectionPlace": { "latitude": "43.610088", "longitude": "1.455615" }
+                },
+                "endAddress": {
+                  "address": { "latitude": "43.610333", "longitude": "1.455558", "streetName": "Chemin piéton" }
+                },
+                "wkt": "MULTILINESTRING ((1.455610 43.610080, 1.455520 43.610309, 1.455544 43.610334))"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

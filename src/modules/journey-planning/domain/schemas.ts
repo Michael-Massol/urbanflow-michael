@@ -11,6 +11,14 @@ export const journeyPlaceSchema = z.object({
   context: z.string().trim().min(1).optional(),
 });
 
+export const journeyGeometrySchema = z.object({
+  type: z.literal("LineString"),
+  coordinates: z.array(z.tuple([
+    z.number().finite().min(-180).max(180),
+    z.number().finite().min(-90).max(90),
+  ])).min(2).max(10_000),
+});
+
 export const searchPlacesInputSchema = z.object({
   query: z.string().trim().min(2, "Saisissez au moins 2 caractères."),
   limit: z.coerce.number().int().min(1).max(10).default(6),

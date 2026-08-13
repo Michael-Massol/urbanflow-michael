@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { searchPlaces } from "@/modules/journey-planning/application/search-places";
 import { getServerTransportProvider } from "@/modules/journey-planning/infrastructure/get-server-transport-provider";
-import { noStoreHeaders, toSafeErrorResult } from "@/modules/journey-planning/infrastructure/http-response";
+import { noStoreHeaders, safeErrorStatus, toSafeErrorResult } from "@/modules/journey-planning/infrastructure/http-response";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +14,6 @@ export async function GET(request: Request) {
     });
     return NextResponse.json({ status: "success", data }, { headers: noStoreHeaders });
   } catch (error) {
-    return NextResponse.json(toSafeErrorResult(error), { status: 400, headers: noStoreHeaders });
+    return NextResponse.json(toSafeErrorResult(error), { status: safeErrorStatus(error), headers: noStoreHeaders });
   }
 }

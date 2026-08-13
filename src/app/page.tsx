@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { DEMO_PROVIDER_NOTICE } from "@/modules/transport/infrastructure/demo/demo-transport-provider";
+import { getServerUserId } from "@/modules/auth/infrastructure/get-server-user-id";
+import { getServerTransportProvider } from "@/modules/journey-planning/infrastructure/get-server-transport-provider";
 
 export default async function HomePage({
   searchParams,
@@ -7,6 +8,8 @@ export default async function HomePage({
   searchParams: Promise<{ compte?: string }>;
 }) {
   const accountDeleted = (await searchParams).compte === "supprime";
+  const isAuthenticated = Boolean(await getServerUserId());
+  const provider = getServerTransportProvider().descriptor;
   return (
     <>
       <section className="hero page-shell">
@@ -22,13 +25,15 @@ export default async function HomePage({
         </p>
         <div className="actions">
           <Link className="button" href="/planifier">Planifier un trajet</Link>
-          <Link className="button button-secondary" href="/connexion">J’ai déjà un compte</Link>
+          {!isAuthenticated ? (
+            <Link className="button button-secondary" href="/connexion">J’ai déjà un compte</Link>
+          ) : null}
         </div>
       </section>
       <section className="page-shell" aria-labelledby="v1-title">
-        <div className="notice" role="status">
-          <strong>{DEMO_PROVIDER_NOTICE}</strong>
-          <span>Le service réel Tisséo sera activé après validation de son accès.</span>
+        <div className={provider.isDemo ? "demo-warning" : "notice"} role="status">
+          <strong>{provider.isDemo ? provider.notice : "Tisséo disponible"}</strong>
+          <span>{provider.isDemo ? "Le mode de démonstration est explicitement activé." : provider.notice}</span>
         </div>
         <h2 id="v1-title">Le socle UrbanFlow</h2>
         <div className="feature-grid">

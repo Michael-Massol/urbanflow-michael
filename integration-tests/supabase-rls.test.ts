@@ -109,10 +109,15 @@ test("RLS isolates profiles, mobility preferences and completed journeys for two
       avoided_grams_co2e: 165.07,
       factor_version: "urbanflow-ademe-2025.1",
       provider: "demo",
+      geometry_snapshot: {
+        type: "LineString",
+        coordinates: [[1.4455, 43.6044], [1.4555, 43.6103]],
+      },
     };
-    const ownJourneyInsert = await clientA.from("completed_journeys").insert(completedJourney).select("id, user_id").single();
+    const ownJourneyInsert = await clientA.from("completed_journeys").insert(completedJourney).select("id, user_id, geometry_snapshot").single();
     assert.ifError(ownJourneyInsert.error);
     assert.equal(ownJourneyInsert.data.user_id, userA.id);
+    assert.deepEqual(ownJourneyInsert.data.geometry_snapshot, completedJourney.geometry_snapshot);
     const [journeysVisibleToA, journeysVisibleToB] = await Promise.all([
       clientA.from("completed_journeys").select("user_id"),
       clientB.from("completed_journeys").select("user_id"),

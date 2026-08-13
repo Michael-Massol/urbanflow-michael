@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import type { CompletedJourney } from "../../carbon-tracking/domain/models";
+import { formatCarbonSavingsPercentage } from "../../carbon-tracking/presentation/format-carbon-savings";
+import { formatEmissionFactorVersion } from "../../carbon-tracking/presentation/format-emission-factor-version";
 import type { ActionResult, Journey, JourneySort } from "../domain/models";
 import { JourneyMap } from "./journey-map";
 
@@ -15,6 +17,7 @@ export function JourneyResults(props: {
   sort: JourneySort;
   onSort: (sort: JourneySort) => void;
   onSelect: (journey: Journey) => void;
+  showAccessibility: boolean;
   mapStyleUrl?: string;
 }) {
   const [confirmationMessage, setConfirmationMessage] = useState("");
@@ -47,13 +50,22 @@ export function JourneyResults(props: {
   }
 
   if (props.journeys.length === 0) return <section className="empty-state"><h2>Aucun trajet</h2><p>Essayez une autre destination ou augmentez la durée de marche dans votre profil.</p></section>;
+  const savingsPercentage = props.selected?.carbonEstimate
+    ? formatCarbonSavingsPercentage(
+      props.selected.carbonEstimate.avoidedGramsCo2e,
+      props.selected.carbonEstimate.carReferenceGramsCo2e,
+    )
+    : null;
   return (
     <section className="journey-results" aria-labelledby="journey-results-title">
       <div className="results-heading"><h2 id="journey-results-title">Propositions</h2><label>Trier par <select value={props.sort} onChange={(event) => props.onSort(event.target.value as JourneySort)}><option value="recommended">Recommandé</option><option value="fastest">Plus rapide</option><option value="least-walking">Moins de marche</option><option value="fewest-transfers">Moins de correspondances</option></select></label></div>
       <div className="journey-list">
         {props.journeys.map((journey) => (
           <article className={`journey-card ${props.selected?.id === journey.id ? "journey-card-selected" : ""}`} key={journey.id}>
-            <div className="badges"><span>Démonstration</span><span>Non temps réel</span></div>
+            <div className="badges">
+              <span>{journey.provider === "tisseo" ? "Tisséo" : "Démonstration"}</span>
+              <span>{journey.realtime ? "Temps réel" : journey.provider === "tisseo" ? "Horaires Tisséo" : "Non temps réel"}</span>
+            </div>
             <h3>{time(journey.departureAt)} → {time(journey.arrivalAt)}</h3>
             <p><strong>{journey.durationMinutes} min</strong> · Marche {journey.walkingMinutes} min · {journey.transferCount} correspondance(s)</p>
             <p>{journey.modes.map((mode) => modeLabels[mode]).join(" · ")}</p>
@@ -71,7 +83,9 @@ export function JourneyResults(props: {
                 <strong>{time(segment.departureAt)} · {modeLabels[segment.mode]}</strong>
                 <p>{segment.origin.label} → {segment.destination.label}</p>
                 <p>{segment.durationMinutes} min{segment.lineName ? ` · ${segment.lineName}` : ""}{segment.direction ? ` · direction ${segment.direction}` : ""}{segment.stopCount !== undefined ? ` · ${segment.stopCount} arrêts` : ""}</p>
-                <p>{segment.accessibility}</p>
+                {props.showAccessibility ? (
+                  <p>Accessibilité : {segment.accessibility ?? "Non disponible"}</p>
+                ) : null}
               </li>
             ))}
           </ol>
@@ -79,13 +93,17 @@ export function JourneyResults(props: {
           {props.selected.carbonEstimate ? (
             <section className="carbon-comparison" aria-labelledby="carbon-title">
               <h3 id="carbon-title">Estimation carbone</h3>
-              <p><strong>{grams(props.selected.carbonEstimate.gramsCo2e)}</strong> pour ce trajet, contre {grams(props.selected.carbonEstimate.carReferenceGramsCo2e)} en voiture thermique de référence.</p>
-              <p>Économie estimée : {grams(props.selected.carbonEstimate.avoidedGramsCo2e)}. Facteurs ADEME/Impact CO₂, version {props.selected.carbonEstimate.factorVersion}. Estimation fondée sur les distances théoriques et des moyennes nationales.</p>
+              <dl className="carbon-metrics">
+                <div><dt>Émissions estimées du trajet</dt><dd>{grams(props.selected.carbonEstimate.gramsCo2e)}</dd></div>
+                <div><dt>Même trajet en voiture thermique</dt><dd>{grams(props.selected.carbonEstimate.carReferenceGramsCo2e)}</dd></div>
+                <div><dt>Économie estimée</dt><dd>{grams(props.selected.carbonEstimate.avoidedGramsCo2e)}{savingsPercentage ? ` (${savingsPercentage})` : ""}</dd></div>
+              </dl>
+              <p>Facteurs d’émission : {formatEmissionFactorVersion(props.selected.carbonEstimate.factorVersion)}. Estimation fondée sur les distances théoriques et des moyennes nationales.</p>
               {pendingConfirmationId === props.selected.id ? (
                 <div className="confirmation-disclosure" role="dialog" aria-modal="true" aria-labelledby="confirmation-title">
                   <h4 id="confirmation-title">Avant d’enregistrer ce trajet</h4>
-                  <p>UrbanFlow conservera uniquement : les noms du départ et de l’arrivée, les horaires prévus, la durée, la distance théorique, les modes utilisés, le fournisseur, les estimations carbone, la version des facteurs et la date de confirmation.</p>
-                  <p>La recherche, les coordonnées précises, la géométrie et les détails des segments ne seront pas enregistrés.</p>
+                  <p>UrbanFlow conservera uniquement : les noms du départ et de l’arrivée, les horaires prévus, la durée, la distance théorique, les modes utilisés, le fournisseur, les estimations carbone, la version des facteurs, la date de confirmation et le tracé cartographique normalisé lorsqu’il est disponible.</p>
+                  <p>La recherche, la position précise du navigateur, les réponses Tisséo brutes et les détails des segments ne seront pas enregistrés.</p>
                   <div className="actions">
                     <button className="button" type="button" disabled={confirming} onClick={() => confirmJourney(props.selected!)}>{confirming ? "Enregistrement…" : "Oui, confirmer et enregistrer"}</button>
                     <button className="button button-secondary" type="button" disabled={confirming} onClick={() => setPendingConfirmationId(null)}>Annuler</button>

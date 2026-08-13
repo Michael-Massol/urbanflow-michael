@@ -12,4 +12,5 @@ test("service worker provides network-first navigation and an offline fallback",
   assert.match(source, /fetch\(request, \{ cache: "no-store" \}\)\.catch\(\(\) => caches\.match\(OFFLINE_URL\)\)/);
   assert.match(source, /url\.pathname\.startsWith\("\/api\/"\)/);
   assert.doesNotMatch(source, /cache\.put\(request/);
+  assert.doesNotMatch(source, /tisseo|maplibre|style\.json|tiles?/i);
 });

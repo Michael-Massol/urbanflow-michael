@@ -21,3 +21,15 @@ test("summarizePayload reports structure without copying values", () => {
   assert.doesNotMatch(JSON.stringify(summary), /Public test place/);
   assert.doesNotMatch(JSON.stringify(summary), /43\.6/);
 });
+
+test("summarizePayload detects Tisséo WKT without retaining coordinates", () => {
+  const summary = summarizePayload({
+    journey: { chunks: [{ service: { wkt: "LINESTRING (1.445 43.604, 1.455 43.610)" } }] },
+  });
+
+  assert.deepEqual(summary.geometry, [{
+    path: "$.journey.chunks[0].service.wkt",
+    kind: "encoded-string",
+  }]);
+  assert.doesNotMatch(JSON.stringify(summary), /1\.445|43\.604/);
+});

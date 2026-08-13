@@ -14,6 +14,9 @@ test("Next.js sends the V4 browser security baseline", async () => {
     "Cross-Origin-Opener-Policy",
   ]) assert.match(source, new RegExp(header));
   assert.match(source, /camera=\(\), microphone=\(\)/);
+  assert.match(source, /NEXT_PUBLIC_MAP_STYLE_URL/);
+  assert.match(source, /mapStyleOrigin/);
+  assert.doesNotMatch(source, /connect-src 'self' https: wss:/);
 });
 
 test("error boundaries present safe French messages without rendering error details", async () => {

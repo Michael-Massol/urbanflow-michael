@@ -40,6 +40,18 @@ La clé privilégiée ne doit jamais être exposée au navigateur. Les clients S
 
 Renseigner aussi `NEXT_PUBLIC_PRIVACY_CONTACT_EMAIL` avant une publication publique. Les étapes complètes de reprise et de mise en production sont détaillées dans [docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md).
 
+Le fournisseur transport est sélectionné explicitement côté serveur :
+
+```env
+TRANSPORT_PROVIDER=tisseo
+TISSEO_API_KEY=<secret serveur>
+NEXT_PUBLIC_MAP_STYLE_URL=https://example.org/style.json
+```
+
+`TISSEO_API_KEY` ne doit jamais être préfixée par `NEXT_PUBLIC_`. Sur Vercel, toute modification de ces
+variables nécessite un nouveau déploiement pour être appliquée, notamment pour l’URL publique du style
+intégrée au build client.
+
 ## PWA
 
 - `app/manifest.ts` décrit l'installation et les icônes 192/512 ;
@@ -65,6 +77,27 @@ provider.planJourney(request)
 
 Les résultats utilisent les modèles UrbanFlow `Place`, `JourneyRequest`, `JourneyOption`, `JourneyLeg` et `TransportMode`. Les DTO Tisséo, GTFS et fixtures restent dans `infrastructure/`.
 
+### Mode Tisséo
+
+Le fournisseur principal peut être activé avec `TRANSPORT_PROVIDER=tisseo`. Dans ce mode, les routes
+`/api/transport/places` et `/api/transport/journeys` utilisent réellement `TisseoTransportAdapter` :
+
+```text
+UI → Route Handler → SearchPlaces/PlanJourney → TransportProvider → Tisséo → modèles UrbanFlow
+```
+
+L’adaptateur normalise les identifiants, libellés, coordonnées, horaires, lignes, directions, modes et
+géométries WKT des réponses Tisséo. Il ne transmet jamais les DTO fournisseur à React. Les distances non
+fournies sur les segments de transport sont dérivées de leur géométrie réelle pour conserver le calcul
+carbone existant.
+
+Les réponses `journeys` validées le 10 août 2026 ne contenaient aucun indicateur explicite de temps réel.
+L’interface affiche donc `Tisséo` et `Horaires Tisséo`, jamais `Temps réel`. Les messages trafic éventuellement
+présents dans la réponse ne suffisent pas à qualifier les horaires de temps réel.
+
+Il n’existe aucun fallback automatique : une absence de clé, un refus, un quota, un délai dépassé ou une
+réponse incompatible produit une erreur explicite et ne retourne jamais une fixture de démonstration.
+
 ### Mode démonstration
 
 Configuration par défaut :
@@ -85,7 +118,8 @@ L’interface `/planifier` rend `provider.descriptor.notice` de manière visible
 
 > Données de démonstration — non temps réel
 
-Le mode `tisseo` exige une clé et un `TisseoTransportAdapter` explicitement injecté. Tant que l'adaptateur réel n'est pas validé, la sélection échoue clairement au lieu de retourner de fausses données.
+Le mode `demo` reste disponible explicitement pour les tests et le développement contrôlé. Il n’est sélectionné
+que lorsque `TRANSPORT_PROVIDER=demo`.
 
 ## Planification V2
 
@@ -99,11 +133,22 @@ La carte est optionnelle. Pour l’activer, renseigner une URL publique de style
 NEXT_PUBLIC_MAP_STYLE_URL=https://example.org/style.json
 ```
 
-Sans cette variable, le détail textuel reste entièrement disponible et un message explique que la carte est désactivée. Les itinéraires de démonstration sont fictifs, non temps réel et impropres à un déplacement réel. La recherche V2 ne persiste rien ; seuls la confirmation explicite et le module carbone V3 alimentent l’historique.
+Sans cette variable, le détail textuel reste entièrement disponible et un message explique que la carte est désactivée. Lorsqu’elle est configurée, MapLibre trace chaque géométrie de segment disponible, place les marqueurs de départ et d’arrivée puis cadre automatiquement le trajet. Le style, ses tuiles, sprites, polices et workers doivent être servis par l’origine publique déclarée dans l’URL du style afin de respecter la CSP restrictive. Les itinéraires de démonstration restent fictifs, non temps réel et impropres à un déplacement réel. La recherche V2 ne persiste rien ; seuls la confirmation explicite et le module carbone V3 alimentent l’historique.
+
+Le diagnostic privé `/diagnostics/transport` contrôle à la demande la recherche de lieux, les itinéraires et
+les géométries. Il indique uniquement si la clé est configurée, jamais sa valeur. Le smoke test live, volontairement
+séparé des tests déterministes, s’exécute avec :
+
+```bash
+npm run test:tisseo:live
+```
+
+Il est ignoré proprement sans clé et limite ses appels à une recherche et un calcul. Le rapport détaillé et la
+chronologie de l’intégration sont dans [docs/TISSEO-INTEGRATION.md](docs/TISSEO-INTEGRATION.md).
 
 ## Suivi carbone V3
 
-Chaque proposition affiche une estimation calculée segment par segment en gCO₂e par passager-kilomètre et la compare à une voiture thermique moyenne diesel conduite seul. Rien n’est enregistré pendant la recherche : une première action présente précisément les données conservées et exclues, puis seule la seconde confirmation explicite crée une ligne dans `completed_journeys`. `/historique` et le résumé du dashboard sont privés et protégés par la RLS propriétaire. L’historique expose les modes, la référence voiture, la version des facteurs et permet au propriétaire de supprimer définitivement un trajet ; un trajet confirmé reste non modifiable.
+Chaque proposition affiche une estimation calculée segment par segment en gCO₂e par passager-kilomètre et la compare à une voiture thermique moyenne diesel conduite seul. Rien n’est enregistré pendant la recherche : une première action présente précisément les données conservées et exclues, puis seule la seconde confirmation explicite crée une ligne dans `completed_journeys`. Cette ligne contient, lorsqu’il existe, un tracé `LineString` UrbanFlow normalisé afin que `/historique` puisse restituer le trajet sans nouvel appel Tisséo. `/historique` et le résumé du dashboard sont privés et protégés par la RLS propriétaire. L’historique expose les modes, la référence voiture, la version des facteurs et permet au propriétaire de supprimer définitivement le trajet et son tracé ; un trajet confirmé reste non modifiable.
 
 Le référentiel statique `urbanflow-ademe-2025.1` reprend les valeurs publiées par ADEME/Impact CO₂ : marche 0, vélo mécanique 0,17, métro 4,44, tramway 4,28, bus thermique 122, TER 27,7 et voiture thermique moyenne diesel 142 gCO₂e/passager-km. Les liens sources et hypothèses sont conservés dans `src/modules/carbon-tracking/domain/emission-factors.ts`.
 
@@ -111,7 +156,7 @@ Ces valeurs sont des moyennes nationales. Le TER sert de référence prudente au
 
 ## Confidentialité et finalisation V4
 
-La page privée `/confidentialite` fournit un résumé des catégories enregistrées, un export JSON versionné et la suppression complète du compte après double confirmation. L’export est construit depuis un modèle UrbanFlow explicite sous la session et la RLS ; il ne contient ni mot de passe, jeton, secret, coordonnées précises ou réponse brute fournisseur. Seule la suppression de l’utilisateur Auth emploie le client Supabase administratif `server-only`. Les cascades SQL effacent profil, préférences et trajets confirmés.
+La page privée `/confidentialite` fournit un résumé des catégories enregistrées, un export JSON versionné et la suppression complète du compte après double confirmation. L’export est construit depuis un modèle UrbanFlow explicite sous la session et la RLS ; il inclut le tracé normalisé des trajets confirmés lorsqu’il existe, mais ne contient ni mot de passe, jeton, secret, position ponctuelle issue de la géolocalisation du navigateur ou réponse brute fournisseur. Seule la suppression de l’utilisateur Auth emploie le client Supabase administratif `server-only`. Les cascades SQL effacent profil, préférences, trajets confirmés et tracés associés.
 
 La politique publique est disponible sur `/politique-de-confidentialite`. Les pages d’erreur ne rendent aucun détail d’infrastructure. Les en-têtes CSP, HSTS en production, anti-framing, `nosniff`, politique de référent et Permissions Policy sont centralisés dans `next.config.ts`.
 
@@ -152,6 +197,7 @@ npm run typecheck
 npm test
 npm run test:rls
 npm run test:spike
+npm run test:tisseo:live
 npm run build
 ```
 

@@ -2,11 +2,10 @@
 
 ## Décision
 
-**GO AVEC LIMITES** au 17 juillet 2026.
 
 L'API v2 est joignable en HTTPS et protège bien `places` et `journeys` par une clé transmise dans le paramètre `key`. Les appels sans clé ont réellement retourné `401`, `text/plain; charset=utf-8` et `No key provided`. Une clé synthétique invalide a retourné `403` avec un corps texte. Aucun des deux cas n'exposait d'en-tête de quota.
 
-Le GO reste limité car aucune clé personnelle n'était disponible dans l'environnement du spike. La recherche de lieux authentifiée, le trajet réel, le schéma JSON de production, les géométries et les quotas associés à une clé n'ont donc pas pu être validés en direct. Ils ne doivent pas être présentés comme fonctionnels dans le MVP avant une nouvelle exécution réussie.
+La clé personnelle a permis de valider en direct la recherche de lieux et le calcul d'un trajet toulousain : les deux appels ont répondu en JSON avec un statut `200`. Le résumé a détecté 14 géométries WKT sur le premier trajet sans conserver leurs coordonnées. Le GO reste limité car aucun en-tête de quota n'a été exposé et la validation visuelle MapLibre doit encore être réalisée dans un navigateur compatible. Le terme court `ca` a également répondu `200`, contrairement au refus annoncé dans la documentation consultée : l'adaptateur ne doit donc pas dépendre de cette erreur supposée.
 
 ## Sources et faits vérifiés
 
@@ -25,13 +24,12 @@ Le GO reste limité car aucune clé personnelle n'était disponible dans l'envir
 Pré-requis : Node.js 22 ou ultérieur.
 
 ```powershell
-cd spikes/tisseo
-$env:TISSEO_API_KEY = "valeur-reçue-de-tisseo"
+Copy-Item spikes/tisseo/.env.example spikes/tisseo/.env.local
+# Renseigner TISSEO_API_KEY uniquement dans spikes/tisseo/.env.local.
 npm run probe
-Remove-Item Env:TISSEO_API_KEY
 ```
 
-Le script n'affiche jamais la clé. Il écrit `artifacts/latest-probe.json`, répertoire ignoré par Git. Les réponses JSON réussies ne sont jamais copiées : seuls les noms de champs, longueurs de tableaux et types de géométrie sont conservés.
+Ces commandes s'exécutent depuis la racine du dépôt. `npm run probe` délègue au spike et charge automatiquement `spikes/tisseo/.env.local` lorsqu'il existe. Une variable `TISSEO_API_KEY` déjà définie dans le terminal reste prioritaire. Le script n'affiche jamais la clé. Il écrit `spikes/tisseo/artifacts/latest-probe.json`, répertoire ignoré par Git. Les réponses JSON réussies ne sont jamais copiées : seuls les noms de champs, longueurs de tableaux et types de géométrie sont conservés.
 
 Pour le contrôle TypeScript, installer uniquement les dépendances du spike :
 
@@ -53,7 +51,7 @@ Toujours exécutés :
 Ajoutés automatiquement lorsque `TISSEO_API_KEY` existe :
 
 1. recherche `capitole`, maximum cinq résultats ;
-2. terme trop court `ca` ;
+2. comportement observé avec le terme court `ca` ;
 3. recherche sans `term` ni coordonnées ;
 4. trajet public Capitole vers Marengo-SNCF, maximum deux résultats ;
 5. trajet sans destination.
@@ -71,14 +69,12 @@ Le fichier anonymisé permet de vérifier :
 - en-têtes contenant `rate`, `quota` ou `retry-after` ;
 - différences entre succès, validation, authentification et indisponibilité réseau.
 
-L'ordre latitude/longitude et le SRID devront être confirmés avec la documentation et une visualisation sur MapLibre. La documentation décrit `x` comme latitude et `y` comme longitude, convention inhabituelle qui impose un test explicite avant tout adaptateur de production.
+Les réponses réelles confirment `x=longitude`, `y=latitude` pour `places`, et les WKT utilisent l’ordre longitude/latitude avec le SRID 4326. Cette convention est couverte par les tests de l’adaptateur. La vérification visuelle MapLibre reste distincte et ne doit pas être revendiquée avant une capture manuelle réussie.
 
 ## Limites et étape de sortie du spike
 
-Le statut pourra devenir **GO** seulement lorsque :
+Le statut pourra devenir **GO** sans limite liée au format lorsque :
 
-- `places-success` retourne un JSON exploitable ;
-- `journey-toulouse-success` retourne au moins un trajet ;
 - les dates, durées et unités sont identifiées ;
 - les géométries sont visualisées correctement avec leur SRID et leur ordre d'axes ;
 - les erreurs authentifiées sont reproductibles ;

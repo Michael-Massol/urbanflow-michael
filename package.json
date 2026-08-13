@@ -11,6 +11,8 @@
     "test": "node --experimental-strip-types --test tests/**/*.test.ts",
     "test:rls": "node --env-file-if-exists=.env.local --experimental-strip-types --test integration-tests/supabase-rls.test.ts",
     "test:spike": "npm --prefix spikes/tisseo test",
+    "test:tisseo:live": "node --env-file-if-exists=.env.local --experimental-strip-types scripts/test-tisseo-live.ts",
+    "probe": "npm --prefix spikes/tisseo run probe",
     "typecheck": "tsc --noEmit",
     "gtfs:download": "node scripts/download-tisseo-gtfs.mjs"
   },
@@ -18,7 +20,7 @@
     "@supabase/ssr": "^0.12.3",
     "@supabase/supabase-js": "^2.110.7",
     "maplibre-gl": "^5.24.0",
-    "next": "^16.2.10",
+    "next": "16.3.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "server-only": "^0.0.1",
@@ -29,10 +31,10 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.39.5",
-    "eslint-config-next": "^16.2.10",
+    "eslint-config-next": "16.3.0",
     "typescript": "^5.9.0"
   },
   "overrides": {
-    "postcss": "8.5.10"
+    "postcss": "8.5.26"
   }
 }

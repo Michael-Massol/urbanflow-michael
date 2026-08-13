@@ -41,7 +41,7 @@ export default async function PrivacyPage() {
               <div><dt>Profil</dt><dd>{summary.hasProfile ? "Enregistré" : "Absent"}</dd></div>
               <div><dt>Préférences</dt><dd>{summary.hasMobilityPreferences ? "Enregistrées" : "Absentes"}</dd></div>
               <div><dt>Trajets confirmés</dt><dd>{summary.completedJourneyCount}</dd></div>
-              <div><dt>Coordonnées précises</dt><dd>Non enregistrées</dd></div>
+              <div><dt>Tracé des trajets confirmés</dt><dd>{summary.storesConfirmedJourneyGeometry ? "Enregistré" : "Absent"}</dd></div>
             </dl>
           ) : (
             <p className="form-message" role="status">
@@ -56,7 +56,8 @@ export default async function PrivacyPage() {
         <article className="dashboard-card">
           <h2>Exporter mes données</h2>
           <p>
-            Téléchargez un fichier JSON contenant uniquement vos données UrbanFlow et votre résumé carbone.
+            Téléchargez un fichier JSON contenant uniquement vos données UrbanFlow, les tracés des trajets
+            confirmés lorsqu’ils existent et votre résumé carbone.
             Les mots de passe, jetons, clés et réponses brutes des fournisseurs en sont exclus.
           </p>
           <a className="button" href="/api/privacy/export" download>

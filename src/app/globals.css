@@ -194,15 +194,24 @@ button:disabled { cursor: not-allowed; opacity: .65; }
 .timeline { display: grid; gap: 1rem; padding-left: 1.5rem; border-left: 3px solid var(--accent); }
 .timeline li { padding-left: .5rem; }
 .timeline p { margin: .35rem 0; color: var(--muted); }
-.journey-map { width: 100%; min-height: 22rem; margin-top: 1rem; border-radius: .8rem; background: var(--map-background); }
+.journey-map { width: 100%; aspect-ratio: 1 / 1; margin-top: 1rem; border-radius: .8rem; background: var(--map-background); }
+.journey-map-history { height: clamp(18rem, 80vw, 22rem); aspect-ratio: auto; margin-top: 0; }
 .map-fallback { padding: 1rem; border: 1px dashed var(--border); border-radius: .8rem; color: var(--muted); }
 .carbon-comparison { margin-top: 1.25rem; padding: 1rem; border: 1px solid var(--notice-border); border-radius: .8rem; background: var(--accent); }
 .carbon-comparison p { line-height: 1.55; }
+.carbon-metrics { display: grid; gap: .75rem; margin: 1rem 0; }
+.carbon-metrics div { display: grid; gap: .15rem; }
+.carbon-metrics dt { color: var(--muted); font-size: .9rem; font-weight: 700; }
+.carbon-metrics dd { margin: 0; font-size: 1.05rem; }
 .history-page { margin-block: 2.5rem 5rem; }
 .history-list { display: grid; gap: 1rem; margin-block: 1.5rem; }
 .history-card { display: grid; gap: 1rem; }
-.history-card h2 { margin-bottom: 0; }
+.history-card-layout { display: grid; gap: 1.25rem; }
+.history-card-content { display: grid; align-content: start; gap: 1rem; min-width: 0; }
+.history-card h2 { margin: 0; }
 .history-card form { justify-self: start; }
+.history-map-region { min-width: 0; }
+.history-map-placeholder, .history-map-fallback { display: grid; min-height: 18rem; place-items: center; margin: 0; padding: 1.25rem; text-align: center; }
 .history-details { display: grid; gap: .75rem; margin: 0; }
 .history-details div { display: grid; gap: .15rem; }
 .history-details dt { color: var(--muted); font-size: .85rem; font-weight: 700; }
@@ -237,6 +246,11 @@ button:disabled { cursor: not-allowed; opacity: .65; }
   .diagnostics-list div { grid-template-columns: 12rem 1fr; align-items: center; }
   .journey-list { grid-template-columns: repeat(3, 1fr); }
   .hero { padding-block: 7rem 4rem; }
+}
+
+@media (min-width: 60rem) {
+  .history-card-layout { grid-template-columns: minmax(0, 55fr) minmax(20rem, 45fr); align-items: start; }
+  .journey-map-history, .history-map-placeholder, .history-map-fallback { height: 22rem; min-height: 22rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

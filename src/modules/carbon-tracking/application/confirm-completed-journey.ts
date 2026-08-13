@@ -1,6 +1,7 @@
 import type { Journey } from "../../journey-planning/domain/models.ts";
 import { calculateCarbonEstimate } from "../domain/calculate-carbon-estimate.ts";
 import type { CompletedJourney, CompletedJourneyRepository } from "../domain/models.ts";
+import { createStoredJourneyGeometry } from "./create-stored-journey-geometry.ts";
 
 export async function confirmCompletedJourney(
   repository: CompletedJourneyRepository,
@@ -26,5 +27,6 @@ export async function confirmCompletedJourney(
     avoidedGramsCo2e: estimate.avoidedGramsCo2e,
     factorVersion: estimate.factorVersion,
     provider: journey.provider,
+    geometry: createStoredJourneyGeometry(journey),
   });
 }
