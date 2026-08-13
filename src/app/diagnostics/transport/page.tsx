@@ -34,7 +34,6 @@ export default async function TransportDiagnosticsPage() {
         <div><dt>Recherche de lieux</dt><dd>{capabilityLabel(diagnostics.places)}</dd></div>
         <div><dt>Calcul d’itinéraires</dt><dd>{capabilityLabel(diagnostics.journeys)}</dd></div>
         <div><dt>Géométrie</dt><dd>{capabilityLabel(diagnostics.geometry)}</dd></div>
-        <div><dt>GTFS local</dt><dd>{diagnostics.gtfsAvailable ? "Disponible" : "Indisponible"}</dd></div>
         <div><dt>Statut</dt><dd>{statusLabels[diagnostics.status]}</dd></div>
         {diagnostics.checkedAt ? <div><dt>Dernier contrôle</dt><dd>{new Date(diagnostics.checkedAt).toLocaleString("fr-FR")}</dd></div> : null}
       </dl>

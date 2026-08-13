@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { getTransportDiagnostics } from "../../src/modules/transport/application/get-transport-diagnostics.ts";
 
@@ -52,4 +53,11 @@ test("transport diagnostic keeps provider failures explicit", async () => {
 
   assert.equal(diagnostics.status, "error");
   assert.equal(diagnostics.journeys.detail, "Erreur HTTP 403");
+});
+
+test("transport diagnostic page does not expose the local GTFS state", async () => {
+  const source = await readFile("src/app/diagnostics/transport/page.tsx", "utf8");
+
+  assert.doesNotMatch(source, /GTFS local/);
+  assert.doesNotMatch(source, /diagnostics\.gtfsAvailable/);
 });
