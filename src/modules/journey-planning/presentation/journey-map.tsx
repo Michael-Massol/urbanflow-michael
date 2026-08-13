@@ -143,6 +143,7 @@ export function JourneyMap({ journey, styleUrl }: { journey: Journey; styleUrl?:
       mapData={mapData}
       {...(styleUrl ? { styleUrl } : {})}
       accessibleLabel="Carte du trajet sélectionné"
+      className="journey-map-planning"
       fallbacks={planningFallbacks}
     />
   );

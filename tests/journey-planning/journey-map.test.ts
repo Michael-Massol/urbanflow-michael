@@ -94,5 +94,7 @@ test("MapLibre stays client-only and exposes style, WebGL and fitBounds fallback
   assert.match(source, /NavigationControl/);
   assert.match(source, /JourneyGeometryMap/);
   assert.match(source, /Impossible d’afficher la carte/);
-  assert.match(styles, /\.journey-map\s*\{[\s\S]*?aspect-ratio:\s*1\s*\/\s*1/);
+  assert.match(source, /className="journey-map-planning"/);
+  assert.match(styles, /\.journey-map-planning\s*\{[^}]*aspect-ratio:\s*5\s*\/\s*4/);
+  assert.match(styles, /\.journey-map-history\s*\{[^}]*aspect-ratio:\s*auto/);
 });
